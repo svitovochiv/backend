@@ -1,8 +1,43 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ConfigService } from '@nestjs/config';
+import { useContainer } from 'class-validator';
+import supertokens from 'supertokens-node';
+import { SupertokensExceptionFilter } from './modules/auth/auth.filter';
+import {
+  ClassSerializerInterceptor,
+  ValidationPipe,
+  VersioningType,
+} from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+  const configService = app.get(ConfigService);
+  app.enableShutdownHooks();
+  app.enableCors({
+    origin: [
+      configService.get('WEBSITE_URL'),
+      configService.get('WEBSITE_DOMAIN'),
+    ],
+    allowedHeaders: ['content-type', ...supertokens.getAllCORSHeaders()],
+    credentials: true,
+  });
+  app.useGlobalFilters(new SupertokensExceptionFilter());
+
+  app.setGlobalPrefix('api', {
+    exclude: ['/'],
+  });
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      forbidUnknownValues: true,
+    }),
+  );
+
+  await app.listen(configService.get('app.port'));
 }
-bootstrap();
+void bootstrap();
