@@ -12,6 +12,10 @@ export class ProductRepository {
     });
   }
 
+  getProducts() {
+    return this.product.findMany();
+  }
+
   private get product() {
     return this.prismaService.product;
   }

@@ -19,6 +19,10 @@ export class ProductService {
     }
   }
 
+  async getProducts() {
+    return await this.productRepository.getProducts();
+  }
+
   private parseProduct(productFile: Buffer) {
     const parsedProducts = this.excelUtil.parseExcelFirstSheet(productFile);
     const endAdditionalInformationRowIndex = parsedProducts.findIndex(

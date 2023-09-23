@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Post,
   UploadedFile,
   UseGuards,
@@ -17,9 +18,15 @@ export class ProductController {
   @UseGuards(new AuthGuard())
   @Post('file')
   @UseInterceptors(FileInterceptor('file'))
-  createProductsViaFile(@UploadedFile() file: Express.Multer.File) {
-    this.productService.createProductsViaFile(
+  async createProductsViaFile(@UploadedFile() file: Express.Multer.File) {
+    await this.productService.createProductsViaFile(
       new UploadProductViaFileDto(file),
     );
+  }
+
+  @UseGuards(new AuthGuard())
+  @Get()
+  async getProducts() {
+    return await this.productService.getProducts();
   }
 }
