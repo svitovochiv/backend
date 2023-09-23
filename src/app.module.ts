@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AuthModule, OnAppInitModule } from './modules';
+import { AuthModule, OnAppInitModule, ProductModule } from './modules';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { appConfig } from './config';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -9,6 +10,11 @@ import { appConfig } from './config';
       isGlobal: true,
       load: [appConfig],
       envFilePath: ['.env'],
+    }),
+    MulterModule.registerAsync({
+      useFactory: () => ({
+        dest: './upload',
+      }),
     }),
     AuthModule.forRootAsync({
       imports: [ConfigModule],
@@ -25,6 +31,7 @@ import { appConfig } from './config';
       }),
     }),
     OnAppInitModule,
+    ProductModule,
   ],
   controllers: [],
   providers: [],
