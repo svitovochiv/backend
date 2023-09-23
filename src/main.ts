@@ -17,8 +17,8 @@ async function bootstrap() {
   app.enableShutdownHooks();
   app.enableCors({
     origin: [
-      configService.get('WEBSITE_URL'),
-      configService.get('WEBSITE_DOMAIN'),
+      configService.get('WEBSITE_URL') as string,
+      configService.get('WEBSITE_DOMAIN') as string,
     ],
     allowedHeaders: ['content-type', ...supertokens.getAllCORSHeaders()],
     credentials: true,
@@ -38,6 +38,6 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(configService.get('app.port'));
+  await app.listen(configService.get('app.port') as string);
 }
 void bootstrap();

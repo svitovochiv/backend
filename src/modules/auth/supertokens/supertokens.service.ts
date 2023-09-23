@@ -130,6 +130,8 @@ export class SupertokensService {
                     const formFields = input.formFields;
                     const formatted = formFields.reduce(
                       (result: IUserRegisterField, { id, value }) => {
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
                         result[id] = value;
                         return result;
                       },

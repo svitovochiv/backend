@@ -20,11 +20,11 @@ import { MulterModule } from '@nestjs/platform-express';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        connectionURI: configService.get('SUPERTOKENS_URL'),
+        connectionURI: configService.get<string>('SUPERTOKENS_URL') as string,
         appInfo: {
           appName: 'game',
-          apiDomain: configService.get('API_URL'),
-          websiteDomain: configService.get('WEBSITE_URL'),
+          apiDomain: configService.get<string>('API_URL') as string,
+          websiteDomain: configService.get<string>('WEBSITE_URL') as string,
           apiBasePath: '/api/auth',
           websiteBasePath: '/auth',
         },

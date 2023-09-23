@@ -3,7 +3,9 @@ import { Quantity, UkraineQuantity } from '../../domain';
 export class QuantityUtil {
   normalizeQuantity(quantity: string): undefined | Quantity {
     const ukraineQuantity = this.getUkraineQuantity(quantity);
-    return this.ukraineQuantityToEnglishQuantityMap[ukraineQuantity];
+    if (ukraineQuantity) {
+      return this.ukraineQuantityToEnglishQuantityMap[ukraineQuantity];
+    }
   }
 
   getUkraineQuantity(quantity: string): undefined | UkraineQuantity {

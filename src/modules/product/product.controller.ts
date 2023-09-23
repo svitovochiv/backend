@@ -18,7 +18,7 @@ export class ProductController {
   @Post('file')
   @UseInterceptors(FileInterceptor('file'))
   createProductsViaFile(@UploadedFile() file: Express.Multer.File) {
-    return this.productService.createProductsViaFile(
+    this.productService.createProductsViaFile(
       new UploadProductViaFileDto(file),
     );
   }

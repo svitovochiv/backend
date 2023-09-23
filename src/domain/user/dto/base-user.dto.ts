@@ -3,6 +3,8 @@ export class BaseUserDto {
   firstName: string;
   lastName: string;
   constructor(baseUserDto: BaseUserDto) {
-    Object.assign(this, baseUserDto);
+    this.email = baseUserDto.email;
+    this.firstName = baseUserDto.firstName;
+    this.lastName = baseUserDto.lastName;
   }
 }
