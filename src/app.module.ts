@@ -3,6 +3,8 @@ import { AuthModule, OnAppInitModule, ProductModule } from './modules';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { appConfig } from './config';
 import { MulterModule } from '@nestjs/platform-express';
+import { HttpExceptionFilter } from './exceptions';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -34,6 +36,11 @@ import { MulterModule } from '@nestjs/platform-express';
     ProductModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      useClass: HttpExceptionFilter,
+      provide: APP_FILTER,
+    },
+  ],
 })
 export class AppModule {}

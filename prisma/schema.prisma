@@ -21,9 +21,10 @@ model User {
 
 model Product {
   id        String   @id @default(uuid())
-  name      String
+  name      String   @unique
   quantity  String
   price     Float
+  isActive  Boolean
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

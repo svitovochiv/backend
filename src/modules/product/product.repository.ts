@@ -12,6 +12,19 @@ export class ProductRepository {
     });
   }
 
+  deactivateProducts(productNames: string[]) {
+    return this.product.updateMany({
+      where: {
+        name: {
+          in: productNames,
+        },
+      },
+      data: {
+        isActive: false,
+      },
+    });
+  }
+
   getProducts() {
     return this.product.findMany();
   }

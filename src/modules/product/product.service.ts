@@ -1,7 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { AddProductDto, UploadProductViaFileDto } from '../../domain';
+import {
+  AddProductDto,
+  ParsedProductDto,
+  ProductDto,
+  UploadProductViaFileDto,
+} from '../../domain';
 import { ExcelUtil, QuantityUtil } from '../../util';
 import { ProductRepository } from './product.repository';
+import {
+  BadRequestError,
+  SeveralProductsWithTheSameNameError,
+} from '../../exceptions';
 
 @Injectable()
 export class ProductService {
@@ -13,40 +22,128 @@ export class ProductService {
   async createProductsViaFile(
     uploadProductViaFileDto: UploadProductViaFileDto,
   ) {
-    const products = this.parseProduct(uploadProductViaFileDto.file.buffer);
-    if (products) {
-      await this.productRepository.addManyProducts(products);
+    const uploadedProducts = this.parseProduct(
+      uploadProductViaFileDto.file.buffer,
+    );
+    if (uploadedProducts) {
+      this.checkDuplicateProducts(uploadedProducts);
+      const existedProducts = await this.getProducts();
+      const existedProductsMap = new Map<string, ProductDto>();
+      existedProducts.forEach((product) => {
+        existedProductsMap.set(product.name, product);
+      });
+      console.log('existedProductsMap', existedProductsMap);
+      const productsToAdd: AddProductDto[] = [];
+      const uploadedProductsNames = new Set<string>();
+
+      uploadedProducts.forEach((newProduct) => {
+        uploadedProductsNames.add(newProduct.name);
+        const isProductExisted = existedProducts.find(
+          (product) => product.name === newProduct.name,
+        );
+
+        if (!isProductExisted) {
+          const productToAdd = new AddProductDto({
+            name: newProduct.name,
+            quantity: newProduct.quantity,
+            price: newProduct.price,
+            isActive: true,
+          });
+          productsToAdd.push(productToAdd);
+        }
+      });
+      console.log('productsToAdd', productsToAdd);
+      const productsToDeactivate: string[] = [];
+      existedProducts.forEach((existedProduct) => {
+        if (!uploadedProductsNames.has(existedProduct.name)) {
+          productsToDeactivate.push(existedProduct.name);
+        }
+      });
+      await this.productRepository.addManyProducts(productsToAdd);
+      await this.productRepository.deactivateProducts(productsToDeactivate);
     }
   }
 
   async getProducts() {
-    return await this.productRepository.getProducts();
+    const existedProducts: ProductDto[] = [];
+    (await this.productRepository.getProducts()).forEach((product) => {
+      const normalizedQuantity = this.quantityUtil.normalizeQuantity(
+        product.quantity,
+      );
+      if (normalizedQuantity) {
+        const existedProduct = new ProductDto({
+          name: product.name,
+          quantity: normalizedQuantity,
+          price: product.price,
+          isActive: product.isActive,
+        });
+        existedProducts.push(existedProduct);
+      }
+    });
+    return existedProducts;
   }
 
   private parseProduct(productFile: Buffer) {
-    const parsedProducts = this.excelUtil.parseExcelFirstSheet(productFile);
-    const endAdditionalInformationRowIndex = parsedProducts.findIndex(
+    const parsedProductsRaw = this.excelUtil.parseExcelFirstSheet(productFile);
+    const endAdditionalInformationRowIndex = parsedProductsRaw.findIndex(
       (values) => values.includes('Ном'),
     );
     const startProductsInformationIndex =
       endAdditionalInformationRowIndex > 0
         ? endAdditionalInformationRowIndex + 1
         : undefined;
+    console.log('startProductsInformationIndex', startProductsInformationIndex);
     if (startProductsInformationIndex) {
-      parsedProducts.splice(0, startProductsInformationIndex);
-      const endProductsInformationIndex = parsedProducts.findIndex(
+      parsedProductsRaw.splice(0, startProductsInformationIndex);
+      const endProductsInformationIndex = parsedProductsRaw.findIndex(
         (values) => values[0] === '',
       );
-      parsedProducts.splice(endProductsInformationIndex);
-      return parsedProducts.map((values) => {
+      parsedProductsRaw.splice(endProductsInformationIndex);
+      const parsedProducts: ParsedProductDto[] = [];
+      console.log('parsedProductsRaw', parsedProductsRaw);
+      parsedProductsRaw.forEach((values) => {
         const quantity = this.quantityUtil.normalizeQuantity(values[2]);
         if (!quantity) throw new Error(`Invalid quantity ${values[2]}`);
-        return new AddProductDto({
-          name: values[1],
-          quantity: quantity,
-          price: values[3],
-        });
+        parsedProducts.push(
+          new ParsedProductDto({
+            position: values[0],
+            name: values[1],
+            quantity: quantity,
+            price: values[3],
+          }),
+        );
       });
+      console.log('parsedProducts', parsedProducts);
+      return parsedProducts;
+    }
+    throw new BadRequestError(
+      'Не знайдено початок таблиці. Початком таблиці є рядок з клітинкою Товар',
+    );
+  }
+
+  private checkDuplicateProducts(parsedProducts: ParsedProductDto[]) {
+    // check on several products with the same name
+    const duplicates = new Map<string, ParsedProductDto[]>();
+    const duplicatesNames = new Set<string>();
+    parsedProducts.forEach((product) => {
+      const duplicateStore = duplicates.get(product.name);
+      if (!duplicateStore) {
+        duplicates.set(product.name, [product]);
+      } else {
+        duplicatesNames.add(product.name);
+        duplicateStore.push(product);
+      }
+    });
+
+    if (duplicatesNames.size > 0) {
+      const formattedDuplicates: ParsedProductDto[] = [];
+      duplicatesNames.forEach((name) => {
+        const duplicatesToAdd = duplicates.get(name);
+        if (duplicatesToAdd) {
+          formattedDuplicates.push(...duplicatesToAdd);
+        }
+      });
+      throw new SeveralProductsWithTheSameNameError(formattedDuplicates);
     }
   }
 }
