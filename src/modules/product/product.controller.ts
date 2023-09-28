@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Post,
   UploadedFile,
   UseGuards,
@@ -8,6 +9,7 @@ import {
 import { AuthGuard } from '../auth';
 import { ProductService } from './product.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadProductViaFileDto } from '../../domain';
 
 @Controller('products')
 export class ProductController {
@@ -16,8 +18,14 @@ export class ProductController {
   @UseGuards(new AuthGuard())
   @Post('file')
   @UseInterceptors(FileInterceptor('file'))
-  createProductsViaFile(@UploadedFile() file: Express.Multer.File) {
-    console.log('file: ', file);
-    return 'Hello World!';
+  async createProductsViaFile(@UploadedFile() file: Express.Multer.File) {
+    await this.productService.createProductsViaFile(
+      new UploadProductViaFileDto(file),
+    );
+  }
+
+  @Get()
+  async getProducts() {
+    return await this.productService.getProducts();
   }
 }
