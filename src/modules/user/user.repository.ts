@@ -24,6 +24,12 @@ export class UserRepository {
     });
   }
 
+  getById({ id }: { id: string }) {
+    return this.user.findUnique({
+      where: { id },
+    });
+  }
+
   private get user() {
     return this.prismaService.user;
   }

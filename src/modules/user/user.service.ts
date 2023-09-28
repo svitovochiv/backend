@@ -16,6 +16,10 @@ export class UserService {
     return this.userRepository.create(userWithRole);
   }
 
+  getUserById(params: { id: string }) {
+    return this.userRepository.getById(params);
+  }
+
   private assignRole(createUserDto: CreateUserDto): CreateUserWithRoleDto {
     const isEmailInMockUsers = MockUsers.some(
       (user) => user.email === createUserDto.email,
