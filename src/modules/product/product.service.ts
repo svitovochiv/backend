@@ -72,6 +72,7 @@ export class ProductService {
       );
       if (normalizedQuantity) {
         const existedProduct = new ProductDto({
+          id: product.id,
           name: product.name,
           quantity: normalizedQuantity,
           price: product.price,

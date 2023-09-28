@@ -24,9 +24,12 @@ import { APP_FILTER } from '@nestjs/core';
       useFactory: (configService: ConfigService) => ({
         connectionURI: configService.get<string>('SUPERTOKENS_URL') as string,
         appInfo: {
-          appName: 'game',
+          appName: 'manager',
           apiDomain: configService.get<string>('API_URL') as string,
-          websiteDomain: configService.get<string>('WEBSITE_URL') as string,
+          // websiteDomain: configService.get<string>('WEBSITE_DOMAIN') as string,
+          websiteDomain: `${configService.get<string>(
+            'WEBSITE_DOMAIN',
+          )}` as string,
           apiBasePath: '/api/auth',
           websiteBasePath: '/auth',
         },

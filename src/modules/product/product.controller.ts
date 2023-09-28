@@ -24,7 +24,6 @@ export class ProductController {
     );
   }
 
-  @UseGuards(new AuthGuard())
   @Get()
   async getProducts() {
     return await this.productService.getProducts();

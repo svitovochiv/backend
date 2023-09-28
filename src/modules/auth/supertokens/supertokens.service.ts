@@ -3,6 +3,7 @@ import supertokens from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
 import ThirdPartyEmailPassword from 'supertokens-node/recipe/thirdpartyemailpassword';
 import EmailVerification from 'supertokens-node/recipe/emailverification';
+import Multitenancy from 'supertokens-node/recipe/multitenancy';
 import { AuthModuleConfig, ConfigInjectionToken } from '../config.interface';
 import { UserService } from '../../user';
 import { IUserRegisterField } from '../interface';
@@ -44,6 +45,17 @@ export class SupertokensService {
             },
           },
         }),
+        Multitenancy.init({
+          getAllowedDomainsForTenantId: async (tenantId) => {
+            console.log('tenantId: ', tenantId);
+            // query your db to get the allowed domain for the input tenantId
+            // or you can make the tenantId equal to the sub domain itself
+            return [
+              this.config.appInfo.websiteDomain + ':3001',
+              this.config.appInfo.websiteDomain + ':3000',
+            ];
+          },
+        }),
         EmailVerification.init({
           mode: 'OPTIONAL', // or "OPTIONAL"
           emailDelivery: {
@@ -78,15 +90,6 @@ export class SupertokensService {
               },
               {
                 id: 'password',
-                // validate?: (value: any) => Promise<string | undefined>;
-                // eslint-disable-next-line @typescript-eslint/require-await
-                // validate: async (value: string) => {
-                //   const testRes = passwordRegex.test(value);
-                //   if (!testRes) {
-                //     return errorMessages.passwordValidationFailed;
-                //   }
-                //   return undefined;
-                // },
               },
             ],
           },
@@ -98,15 +101,6 @@ export class SupertokensService {
                   if (input.type === 'PASSWORD_RESET') {
                     return originalImplementation.sendEmail({
                       ...input,
-                      // passwordResetLink: input.passwordResetLink.replace(
-                      //   // we need to replace the base link with ours
-                      //   `${this.configService.get(
-                      //     'WEBSITE_URL',
-                      //   )}/auth/reset-password`,
-                      //   `${this.configService.get(
-                      //     'WEBSITE_URL',
-                      //   )}/forgotPassword`,
-                      // ),
                     });
                   }
                   return originalImplementation.sendEmail(input);
@@ -146,70 +140,48 @@ export class SupertokensService {
                   }
                   return response;
                 },
-                // thirdPartySignInUpPOST: async (input) => {
-                //   if (
-                //     originalImplementation.thirdPartySignInUpPOST === undefined
-                //   ) {
-                //     throw Error('Should never come here');
-                //   }
-                //   const response =
-                //     await originalImplementation.thirdPartySignInUpPOST(input);
-                //   // if (response.status === 'OK') {
-                //   //   // const googleAuthToken =
-                //   //   //   response.authCodeResponse.access_token;
-                //   //   const googleAuthToken = response.oAuthTokens.access_token;
-                //   //   const userData =
-                //   //     await this.googleApisService.getGoogleUserByGoogleAccessToken(
-                //   //       googleAuthToken,
-                //   //     );
-                //   //   const appUser = await this.userService.getUserByAuthId(
-                //   //     response.user.id,
-                //   //   );
-                //   //   try {
-                //   //     if (!appUser) {
-                //   //       await this.userService.createUser({
-                //   //         authId: response.user.id,
-                //   //         email: userData.email,
-                //   //         firstName: userData.given_name,
-                //   //         lastName: userData.family_name,
-                //   //         googleAuthToken: googleAuthToken,
-                //   //         googleAuthRefreshToken:
-                //   //           response.oAuthTokens.refresh_token,
-                //   //         googleUserId: response.oAuthTokens.id_token,
-                //   //       });
-                //   //     } else {
-                //   //       await this.userService.updateUserGoogleAccessToken({
-                //   //         userId: appUser.id,
-                //   //         googleAccessToken: googleAuthToken,
-                //   //         googleAuthRefreshToken:
-                //   //           response.oAuthTokens.refresh_token,
-                //   //         googleUserId: response.oAuthTokens.id_token,
-                //   //       });
-                //   //     }
-                //   //   } catch (error) {
-                //   //     console.error(error);
-                //   //   }
-                //   // }
-                //   return response;
-                // },
+                thirdPartySignInUpPOST: async (input) => {
+                  console.log('thirdPartySignInUpPOST.input: ', input);
+                  if (
+                    originalImplementation.thirdPartySignInUpPOST === undefined
+                  ) {
+                    throw Error('Should never come here');
+                  }
+                  const response =
+                    await originalImplementation.thirdPartySignInUpPOST(input);
+                  if (response.status === 'OK') {
+                    try {
+                      await this.userService.create({
+                        authId: response.user.id,
+                        email: response.user.email,
+                        // TODO get client name from google
+                        firstName: 'Немає',
+                        lastName: 'Немає',
+                      });
+                    } catch (error) {
+                      console.error(error);
+                    }
+                  }
+                  return response;
+                },
               };
             },
           },
           providers: [
-            // {
-            //   config: {
-            //     thirdPartyId: 'google',
-            //     clients: [
-            //       {
-            //         clientId: this.configService.get('GOOGLE_CLIENT_ID'),
-            //         clientSecret: this.configService.get(
-            //           'GOOGLE_CLIENT_SECRET',
-            //         ),
-            //         scope: googleScopes,
-            //       },
-            //     ],
-            //   },
-            // },
+            {
+              config: {
+                thirdPartyId: 'google',
+                clients: [
+                  {
+                    clientId:
+                      '1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com',
+                    clientSecret: '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',
+                    scope: ['email', 'profile'],
+                  },
+                ],
+              },
+            },
+
             // ThirdPartyEmailPassword.Google({
             //   clientId: this.configService.get('GOOGLE_CLIENT_ID'),
             //   clientSecret: this.configService.get('GOOGLE_CLIENT_SECRET'),
