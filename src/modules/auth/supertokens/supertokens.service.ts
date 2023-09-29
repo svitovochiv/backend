@@ -46,8 +46,7 @@ export class SupertokensService {
           },
         }),
         Multitenancy.init({
-          getAllowedDomainsForTenantId: async (tenantId) => {
-            console.log('tenantId: ', tenantId);
+          getAllowedDomainsForTenantId: async () => {
             // query your db to get the allowed domain for the input tenantId
             // or you can make the tenantId equal to the sub domain itself
             return [
@@ -141,7 +140,6 @@ export class SupertokensService {
                   return response;
                 },
                 thirdPartySignInUpPOST: async (input) => {
-                  console.log('thirdPartySignInUpPOST.input: ', input);
                   if (
                     originalImplementation.thirdPartySignInUpPOST === undefined
                   ) {
