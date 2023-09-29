@@ -5,6 +5,7 @@ import { appConfig } from './config';
 import { MulterModule } from '@nestjs/platform-express';
 import { HttpExceptionFilter } from './exceptions';
 import { APP_FILTER } from '@nestjs/core';
+import { BasketModule } from './modules/basket/basket.module';
 
 @Module({
   imports: [
@@ -35,8 +36,9 @@ import { APP_FILTER } from '@nestjs/core';
         },
       }),
     }),
-    OnAppInitModule,
+    BasketModule,
     ProductModule,
+    OnAppInitModule,
   ],
   controllers: [],
   providers: [

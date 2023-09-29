@@ -1,4 +1,3 @@
-import { SignupUserDto } from './signup-user.dto';
 import { BaseUserDto } from './base-user.dto';
 
 export class CreateUserDto extends BaseUserDto {

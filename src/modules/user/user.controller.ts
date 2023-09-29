@@ -11,7 +11,6 @@ export class UserController {
   @UseGuards(new AuthGuard())
   async getUser(@Session() session: IMSession) {
     const user = await this.userService.getByAuthId(session.getUserId());
-    console.log('user', user);
     if (user) {
       await session.mergeIntoAccessTokenPayload({ appUserId: user.id });
       return user;

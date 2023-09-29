@@ -152,9 +152,8 @@ export class SupertokensService {
                       await this.userService.create({
                         authId: response.user.id,
                         email: response.user.email,
-                        // TODO get client name from google
-                        firstName: 'Немає',
-                        lastName: 'Немає',
+                        // firstName: response.user.email.split('@')[0],
+                        // lastName: response.user.email.split('@')[1],
                       });
                     } catch (error) {
                       console.error(error);

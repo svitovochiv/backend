@@ -17,14 +17,36 @@ model User {
   authId    String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Basket    Basket?  @relation(fields: [basketId], references: [id])
+  basketId  String?
 }
 
 model Product {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  quantity  String
-  price     Float
-  isActive  Boolean
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String          @id @default(uuid())
+  name          String          @unique
+  quantity      String
+  price         Float
+  isActive      Boolean
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  basketDetails BasketProduct[]
+}
+
+model Basket {
+  id             String          @id @default(uuid())
+  userId         String          @unique
+  basketProducts BasketProduct[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  User           User[]
+}
+
+model BasketProduct {
+  basketId  String  @id
+  productId String
+  count     Int
+  product   Product @relation(fields: [productId], references: [id])
+  basket    Basket  @relation(fields: [basketId], references: [id])
+
+  @@unique([basketId, productId])
 }
