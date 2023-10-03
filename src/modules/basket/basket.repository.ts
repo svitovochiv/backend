@@ -7,10 +7,13 @@ export class BasketRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   updateOrCreateBasketProduct(updateBasketProductDto: UpdateBasketProductDto) {
+    console.log('updateBasketProductDto', updateBasketProductDto);
     return this.basketProduct.upsert({
       where: {
-        basketId: updateBasketProductDto.basketId,
-        productId: updateBasketProductDto.productId,
+        basketId_productId: {
+          basketId: updateBasketProductDto.basketId,
+          productId: updateBasketProductDto.productId,
+        },
       },
       create: {
         basketId: updateBasketProductDto.basketId,
@@ -23,33 +26,35 @@ export class BasketRepository {
     });
   }
 
-  getOrCreateBasket(createBasketDto: CreateBasketDto) {
-    return this.basket.upsert({
-      where: {
+  createBasketProduct(createBasketDto: CreateBasketDto) {
+    return this.basket.create({
+      data: {
         userId: createBasketDto.userId,
       },
-      create: {
-        userId: createBasketDto.userId,
-      },
-      update: {},
     });
   }
-  //
-  // createBasketProduct(createBasketDto: CreateBasketDto) {
-  //   return this.basket.create({
-  //     data: {
-  //       userId: createBasketDto.userId,
-  //     },
-  //   });
-  // }
-  //
-  // getBasketProductByUserId(userId: string) {
-  //   return this.basket.findUnique({
-  //     where: {
-  //       userId,
-  //     },
-  //   });
-  // }
+
+  getBasketProductByUserId(userId: string) {
+    return this.basket.findUnique({
+      where: {
+        userId,
+      },
+    });
+  }
+
+  getOrderedProductsMinimalInfoByUserId({ userId }: { userId: string }) {
+    return this.basketProduct.findMany({
+      where: {
+        basket: {
+          userId,
+        },
+      },
+      select: {
+        count: true,
+        productId: true,
+      },
+    });
+  }
 
   private get basket() {
     return this.prismaService.basket;

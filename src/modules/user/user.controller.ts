@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { AuthGuard, IMSession, Session } from '../auth';
+import { AuthGuard, CSession, Session } from '../auth';
 import { BadRequestError } from '../../exceptions';
 
 @Controller('user')
@@ -9,7 +9,7 @@ export class UserController {
 
   @Get('me')
   @UseGuards(new AuthGuard())
-  async getUser(@Session() session: IMSession) {
+  async getUser(@Session() session: CSession) {
     const user = await this.userService.getByAuthId(session.getUserId());
     if (user) {
       await session.mergeIntoAccessTokenPayload({ appUserId: user.id });

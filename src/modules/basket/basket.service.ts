@@ -2,6 +2,7 @@ import { BasketRepository } from './basket.repository';
 import { Injectable } from '@nestjs/common';
 import {
   CreateBasketDto,
+  GetBasketByUserIdDto,
   UpdateBasketProductByUserIdDto,
   UpdateBasketProductDto,
 } from '../../domain';
@@ -24,11 +25,20 @@ export class BasketService {
       }),
     );
   }
-  getOrCreateBasket(createBasketDto: CreateBasketDto) {
-    return this.basketRepository.getOrCreateBasket(createBasketDto);
+
+  async getOrCreateBasket(createBasketDto: CreateBasketDto) {
+    const basket = await this.basketRepository.getBasketProductByUserId(
+      createBasketDto.userId,
+    );
+    if (!basket) {
+      return this.basketRepository.createBasketProduct(createBasketDto);
+    }
+    return basket;
   }
 
-  getOrderedProducts() {
-    // return this.basketRepository.getOrderedProducts();
+  getOrderedProductsMinimalInfo(data: GetBasketByUserIdDto) {
+    return this.basketRepository.getOrderedProductsMinimalInfoByUserId({
+      userId: data.userId,
+    });
   }
 }

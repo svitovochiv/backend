@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Put } from '@nestjs/common';
+import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
 import { BasketService } from './basket.service';
 import { ReqUpdateBasketProductByUserIdDto } from '../../domain/order/dto/req-validation/req-update-basket-product-by-userId.dto';
+import { AuthGuard, CSession, Session } from '../auth';
 
 @Controller('basket')
 export class BasketController {
@@ -14,8 +15,12 @@ export class BasketController {
     return this.basketService.updateProduct(updateBasketProductDto);
   }
 
-  @Get()
-  getOrderedProducts() {
-    return this.basketService.getOrderedProducts();
+  @Get('minimal-info')
+  @UseGuards(new AuthGuard())
+  getOrderedProducts(@Session() session: CSession) {
+    const userId = session.getAccessTokenPayload().appUserId;
+    return this.basketService.getOrderedProductsMinimalInfo({
+      userId,
+    });
   }
 }
