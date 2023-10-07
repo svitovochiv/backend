@@ -62,6 +62,27 @@ export class BasketRepository {
     });
   }
 
+  getOrderedProductsUserId({ userId }: { userId: string }) {
+    return this.basketProduct.findMany({
+      where: {
+        basket: {
+          userId,
+        },
+      },
+      select: {
+        basketId: true,
+        count: true,
+        productId: true,
+        product: {
+          select: {
+            name: true,
+            price: true,
+          },
+        },
+      },
+    });
+  }
+
   private get basket() {
     return this.prismaService.basket;
   }

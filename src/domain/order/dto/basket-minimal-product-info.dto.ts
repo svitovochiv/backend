@@ -1,12 +1,10 @@
-export class BasketProductDto {
+export class BasketMinimalProductInfoDto {
   basketId: string;
   productId: string;
   count: number;
-  cost: number;
-  constructor(data: BasketProductDto) {
+  constructor(data: BasketMinimalProductInfoDto) {
     this.basketId = data.basketId;
     this.productId = data.productId;
     this.count = data.count;
-    this.cost = data.cost;
   }
 }

@@ -1,7 +1,7 @@
 import { BasketRepository } from './basket.repository';
 import { Injectable } from '@nestjs/common';
 import {
-  BasketProductDto,
+  BasketMinimalProductInfoDto,
   CreateBasketDto,
   GetBasketByUserIdDto,
   UpdateBasketProductByUserIdDto,
@@ -35,7 +35,7 @@ export class BasketService {
         }),
       );
 
-    return new BasketProductDto({
+    return new BasketMinimalProductInfoDto({
       basketId: savedBasketProduct.basketId,
       productId: savedBasketProduct.productId,
       count: savedBasketProduct.count.toNumber(),
@@ -59,7 +59,7 @@ export class BasketService {
       });
     return productsInBasket.map(
       (product) =>
-        new BasketProductDto({
+        new BasketMinimalProductInfoDto({
           basketId: product.basketId,
           productId: product.productId,
           count: product.count.toNumber(),
