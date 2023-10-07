@@ -12,7 +12,6 @@ export class OnAppInitModule {
   constructor(private readonly userService: UserService) {}
 
   private async createUser(creds: SignupUserDto[]) {
-    console.log('Creating mock users');
     for (const cred of creds) {
       const response = await EmailPassword.emailPasswordSignUp(
         '',

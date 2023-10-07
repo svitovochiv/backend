@@ -7,7 +7,6 @@ export class BasketRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   updateOrCreateBasketProduct(updateBasketProductDto: UpdateBasketProductDto) {
-    console.log('updateBasketProductDto', updateBasketProductDto);
     return this.basketProduct.upsert({
       where: {
         basketId_productId: {
@@ -27,7 +26,6 @@ export class BasketRepository {
   }
 
   createBasketProduct(createBasketDto: CreateBasketDto) {
-    console.log('createBasketDto', createBasketDto);
     return this.basket.create({
       data: {
         user: {

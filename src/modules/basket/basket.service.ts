@@ -2,6 +2,7 @@ import { BasketRepository } from './basket.repository';
 import { Injectable } from '@nestjs/common';
 import {
   BasketMinimalProductInfoDto,
+  BasketSumDto,
   CreateBasketDto,
   GetBasketByUserIdDto,
   UpdateBasketProductByUserIdDto,
@@ -65,5 +66,23 @@ export class BasketService {
           count: product.count.toNumber(),
         }),
     );
+  }
+
+  async getOrderedProductsSum(data: GetBasketByUserIdDto) {
+    const productsInBasket =
+      await this.basketRepository.getOrderedProductsUserId({
+        userId: data.userId,
+      });
+    const sum = productsInBasket.reduce((acc, product) => {
+      const count = product.count.toNumber();
+      const price = product.product.price;
+      const sum = count * price;
+      return acc + sum;
+    }, 0);
+    console.log(JSON.stringify(productsInBasket, null, 2));
+    console.log(sum);
+    return new BasketSumDto({
+      sum,
+    });
   }
 }

@@ -11,7 +11,6 @@ export class BasketController {
   updateBasketProduct(
     @Body() updateBasketProductDto: ReqUpdateBasketProductByUserIdDto,
   ) {
-    console.log('updateBasketProductDto', updateBasketProductDto.productId);
     return this.basketService.updateProduct(updateBasketProductDto);
   }
 
@@ -20,6 +19,15 @@ export class BasketController {
   getOrderedProducts(@Session() session: CSession) {
     const userId = session.getAccessTokenPayload().appUserId;
     return this.basketService.getOrderedProductsMinimalInfo({
+      userId,
+    });
+  }
+
+  @Get('sum')
+  @UseGuards(new AuthGuard())
+  getOrderedProductsSum(@Session() session: CSession) {
+    const userId = session.getAccessTokenPayload().appUserId;
+    return this.basketService.getOrderedProductsSum({
       userId,
     });
   }
