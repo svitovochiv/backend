@@ -27,9 +27,14 @@ export class BasketRepository {
   }
 
   createBasketProduct(createBasketDto: CreateBasketDto) {
+    console.log('createBasketDto', createBasketDto);
     return this.basket.create({
       data: {
-        userId: createBasketDto.userId,
+        user: {
+          connect: {
+            id: createBasketDto.userId,
+          },
+        },
       },
     });
   }
@@ -50,6 +55,7 @@ export class BasketRepository {
         },
       },
       select: {
+        basketId: true,
         count: true,
         productId: true,
       },
