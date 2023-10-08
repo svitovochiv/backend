@@ -31,4 +31,13 @@ export class BasketController {
       userId,
     });
   }
+
+  @Get('products')
+  @UseGuards(new AuthGuard())
+  getBasketByUserId(@Session() session: CSession) {
+    const userId = session.getAccessTokenPayload().appUserId;
+    return this.basketService.getProductsInBasket({
+      userId,
+    });
+  }
 }

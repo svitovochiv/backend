@@ -75,7 +75,19 @@ export class BasketRepository {
           select: {
             name: true,
             price: true,
+            quantity: true,
           },
+        },
+      },
+    });
+  }
+
+  deleteBasketProduct(data: { basketId: string; productId: string }) {
+    return this.basketProduct.delete({
+      where: {
+        basketId_productId: {
+          basketId: data.basketId,
+          productId: data.productId,
         },
       },
     });

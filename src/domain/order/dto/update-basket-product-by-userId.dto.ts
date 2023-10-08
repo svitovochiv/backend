@@ -1,7 +1,7 @@
 export class UpdateBasketProductByUserIdDto {
   userId: string;
   productId: string;
-  count: number;
+  count?: number;
   constructor(updateBasketProductDto: UpdateBasketProductByUserIdDto) {
     this.userId = updateBasketProductDto.userId;
     this.productId = updateBasketProductDto.productId;

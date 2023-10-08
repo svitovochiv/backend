@@ -5,42 +5,63 @@ import {
   BasketSumDto,
   CreateBasketDto,
   GetBasketByUserIdDto,
+  ProductsInBasketDto,
+  Quantity,
   UpdateBasketProductByUserIdDto,
   UpdateBasketProductDto,
 } from '../../domain';
+import { DeleteProductInBasketDto } from '../../domain/order/dto/delete-product-in-basket.dto';
+import { QuantityUtil } from '../../util';
 
 @Injectable()
 export class BasketService {
+  private readonly quantityUtil = new QuantityUtil();
   constructor(private readonly basketRepository: BasketRepository) {}
 
-  async updateProduct(updateBasketProductDto: UpdateBasketProductByUserIdDto) {
-    // validate
-    const roundedCount = Math.round(updateBasketProductDto.count * 100) / 100;
-    const validatedUpdateBasketProductDto = new UpdateBasketProductByUserIdDto({
-      userId: updateBasketProductDto.userId,
-      productId: updateBasketProductDto.productId,
-      count: roundedCount,
-    });
-
-    const basket = await this.getOrCreateBasket(
-      new CreateBasketDto({
-        userId: validatedUpdateBasketProductDto.userId,
-      }),
+  async deleteProduct(deleteProductDto: DeleteProductInBasketDto) {
+    const basket = await this.basketRepository.getBasketProductByUserId(
+      deleteProductDto.userId,
     );
-    const savedBasketProduct =
-      await this.basketRepository.updateOrCreateBasketProduct(
-        new UpdateBasketProductDto({
-          basketId: basket.id,
-          productId: validatedUpdateBasketProductDto.productId,
-          count: validatedUpdateBasketProductDto.count,
+    if (basket) {
+      await this.basketRepository.deleteBasketProduct({
+        productId: deleteProductDto.productId,
+        basketId: basket.id,
+      });
+    }
+  }
+
+  async updateProduct(updateBasketProductDto: UpdateBasketProductByUserIdDto) {
+    if (!updateBasketProductDto.count) {
+      return await this.deleteProduct(
+        new DeleteProductInBasketDto({
+          productId: updateBasketProductDto.productId,
+          userId: updateBasketProductDto.userId,
         }),
       );
+    } else {
+      updateBasketProductDto.count =
+        Math.round(updateBasketProductDto.count * 100) / 100;
 
-    return new BasketMinimalProductInfoDto({
-      basketId: savedBasketProduct.basketId,
-      productId: savedBasketProduct.productId,
-      count: savedBasketProduct.count.toNumber(),
-    });
+      const basket = await this.getOrCreateBasket(
+        new CreateBasketDto({
+          userId: updateBasketProductDto.userId,
+        }),
+      );
+      const savedBasketProduct =
+        await this.basketRepository.updateOrCreateBasketProduct(
+          new UpdateBasketProductDto({
+            basketId: basket.id,
+            productId: updateBasketProductDto.productId,
+            count: updateBasketProductDto.count,
+          }),
+        );
+
+      return new BasketMinimalProductInfoDto({
+        basketId: savedBasketProduct.basketId,
+        productId: savedBasketProduct.productId,
+        count: savedBasketProduct.count.toNumber(),
+      });
+    }
   }
 
   async getOrCreateBasket(createBasketDto: CreateBasketDto) {
@@ -79,10 +100,29 @@ export class BasketService {
       const sum = count * price;
       return acc + sum;
     }, 0);
-    console.log(JSON.stringify(productsInBasket, null, 2));
-    console.log(sum);
+
     return new BasketSumDto({
       sum,
+    });
+  }
+
+  async getProductsInBasket(data: GetBasketByUserIdDto) {
+    const savedProductsInBasket =
+      await this.basketRepository.getOrderedProductsUserId({
+        userId: data.userId,
+      });
+    return savedProductsInBasket.map((productInBasket) => {
+      const quantity =
+        this.quantityUtil.normalizeQuantity(productInBasket.product.quantity) ||
+        Quantity.Kilogram;
+      return new ProductsInBasketDto({
+        name: productInBasket.product.name,
+        productId: productInBasket.productId,
+        count: productInBasket.count.toNumber(),
+        price: productInBasket.product.price,
+        sum: productInBasket.count.toNumber() * productInBasket.product.price,
+        quantity: quantity,
+      });
     });
   }
 }
