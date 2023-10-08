@@ -115,13 +115,16 @@ export class BasketService {
       const quantity =
         this.quantityUtil.normalizeQuantity(productInBasket.product.quantity) ||
         Quantity.Kilogram;
+      let sum =
+        productInBasket.count.toNumber() * productInBasket.product.price;
+      sum = Math.round(sum * 100) / 100;
       return new ProductsInBasketDto({
         name: productInBasket.product.name,
         productId: productInBasket.productId,
         count: productInBasket.count.toNumber(),
         price: productInBasket.product.price,
-        sum: productInBasket.count.toNumber() * productInBasket.product.price,
-        quantity: quantity,
+        sum,
+        quantity,
       });
     });
   }
