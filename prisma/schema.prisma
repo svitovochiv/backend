@@ -9,26 +9,29 @@ generator client {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  firstName String?
-  lastName  String?
-  role      String
-  authId    String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Basket    Basket?
+  id              String            @id @default(uuid())
+  email           String            @unique
+  firstName       String?
+  lastName        String?
+  role            String
+  authId          String            @unique
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  Basket          Basket?
+  Order           Order[]
+  ShippingDetails ShippingDetails[]
 }
 
 model Product {
-  id            String          @id @default(uuid())
-  name          String          @unique
-  quantity      String
-  price         Float
-  isActive      Boolean
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  basketDetails BasketProduct[]
+  id             String           @id @default(uuid())
+  name           String           @unique
+  quantity       String
+  price          Float
+  isActive       Boolean
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  BasketProducts BasketProduct[]
+  OrderedProduct OrderedProduct[]
 }
 
 model Basket {
@@ -48,4 +51,41 @@ model BasketProduct {
   basket    Basket  @relation(fields: [basketId], references: [id])
 
   @@id([basketId, productId])
+}
+
+model OrderedProduct {
+  id    String @id @default(uuid())
+  count Float
+  price Float
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   String
+}
+
+model ShippingDetails {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  address       String
+  number        String
+  firstName     String
+  lastName      String
+  paymentMethod String
+  User          User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId        String
+  Order         Order[]
+}
+
+model Order {
+  id                String           @id @default(uuid())
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  orderStatus       String
+  ShippingDetails   ShippingDetails  @relation(fields: [shippingDetailsId], references: [id])
+  shippingDetailsId String
+  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId            String
+  OrderedProduct    OrderedProduct[]
 }

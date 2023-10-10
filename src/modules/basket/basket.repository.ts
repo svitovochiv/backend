@@ -1,6 +1,10 @@
 import { PrismaService } from '../prisma';
 import { Injectable } from '@nestjs/common';
-import { CreateBasketDto, UpdateBasketProductDto } from '../../domain';
+import {
+  CreateBasketDto,
+  SubmitBasket,
+  UpdateBasketProductDto,
+} from '../../domain';
 
 @Injectable()
 export class BasketRepository {
@@ -92,6 +96,8 @@ export class BasketRepository {
       },
     });
   }
+
+  submitBasket(data: SubmitBasket) {}
 
   private get basket() {
     return this.prismaService.basket;

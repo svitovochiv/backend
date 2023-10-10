@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
 import { BasketService } from './basket.service';
-import { ReqUpdateBasketProductByUserIdDto } from '../../domain/order/dto/req-validation/req-update-basket-product-by-userId.dto';
 import { AuthGuard, CSession, Session } from '../auth';
+import { ReqUpdateBasketProductByUserIdDto } from '../../domain';
 
 @Controller('basket')
 export class BasketController {

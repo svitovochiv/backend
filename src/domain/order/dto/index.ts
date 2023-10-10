@@ -6,3 +6,5 @@ export * from './get-basket-by-user-id.dto';
 export * from './basket-minimal-product-info.dto';
 export * from './basket-sum.dto';
 export * from './products-in-basket.dto';
+export * from './shipping-details';
+export * from './ordered-product';

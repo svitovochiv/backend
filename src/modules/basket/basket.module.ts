@@ -8,5 +8,6 @@ import { BasketController } from './basket.controller';
   imports: [PrismaModule],
   providers: [BasketRepository, BasketService],
   controllers: [BasketController],
+  exports: [BasketService],
 })
 export class BasketModule {}

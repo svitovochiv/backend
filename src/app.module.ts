@@ -1,11 +1,16 @@
 import { Module } from '@nestjs/common';
-import { AuthModule, OnAppInitModule, ProductModule } from './modules';
+import {
+  AuthModule,
+  OnAppInitModule,
+  OrderModule,
+  ProductModule,
+} from './modules';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { appConfig } from './config';
 import { MulterModule } from '@nestjs/platform-express';
 import { HttpExceptionFilter } from './exceptions';
 import { APP_FILTER } from '@nestjs/core';
-import { BasketModule } from './modules/basket/basket.module';
+import { BasketModule } from './modules/basket';
 
 @Module({
   imports: [
@@ -38,6 +43,7 @@ import { BasketModule } from './modules/basket/basket.module';
     }),
     BasketModule,
     ProductModule,
+    OrderModule,
     OnAppInitModule,
   ],
   controllers: [],

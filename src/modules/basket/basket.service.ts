@@ -7,6 +7,7 @@ import {
   GetBasketByUserIdDto,
   ProductsInBasketDto,
   Quantity,
+  SubmitBasket,
   UpdateBasketProductByUserIdDto,
   UpdateBasketProductDto,
 } from '../../domain';
@@ -127,5 +128,9 @@ export class BasketService {
         quantity,
       });
     });
+  }
+
+  submitBasket(data: SubmitBasket) {
+    return this.basketRepository.submitBasket(data);
   }
 }
