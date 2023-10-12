@@ -8,3 +8,4 @@ export * from './basket-sum.dto';
 export * from './products-in-basket.dto';
 export * from './shipping-details';
 export * from './ordered-product';
+export * from './order-minimal-info.dto';

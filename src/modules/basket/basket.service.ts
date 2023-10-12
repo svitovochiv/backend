@@ -130,7 +130,7 @@ export class BasketService {
     });
   }
 
-  submitBasket(data: SubmitBasket) {
-    return this.basketRepository.submitBasket(data);
+  deleteBasketByUserId(data: { userId: string }) {
+    return this.basketRepository.deleteBasketByUserId(data);
   }
 }

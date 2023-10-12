@@ -97,7 +97,15 @@ export class BasketRepository {
     });
   }
 
-  submitBasket(data: SubmitBasket) {}
+  deleteBasketByUserId({ userId }: { userId: string }) {
+    return this.basketProduct.deleteMany({
+      where: {
+        basket: {
+          userId,
+        },
+      },
+    });
+  }
 
   private get basket() {
     return this.prismaService.basket;

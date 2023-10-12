@@ -6,6 +6,9 @@ import {
   CreateOrder,
   GetBasketByUserIdDto,
   OrderedProduct,
+  OrderMinimalInfoDto,
+  OrderStatus,
+  PaymentMethod,
   SubmitBasket,
 } from '../../domain';
 
@@ -47,6 +50,34 @@ export class OrderService {
         orderedProducts: orderedProducts,
       }),
     );
+    await this.basketService.deleteBasketByUserId({
+      userId: submitBasket.userId,
+    });
     return createdOrder;
+  }
+
+  async getOrdersByUserId({ userId }: { userId: string }) {
+    const savedOrders = await this.orderRepository.getOrdersByUserId({
+      userId,
+    });
+    return savedOrders.map((savedOrder) => {
+      const totalPrice = savedOrder.OrderedProduct.reduce(
+        (acc, orderedProduct) => {
+          return acc + orderedProduct.price * orderedProduct.count;
+        },
+        0,
+      );
+      const totalPriceRounded = Math.round(totalPrice * 100) / 100;
+      return new OrderMinimalInfoDto({
+        id: savedOrder.id,
+        createdAt: savedOrder.createdAt,
+        updatedAt: savedOrder.updatedAt,
+        totalPrice: totalPriceRounded,
+        paymentMethod: savedOrder.ShippingDetails
+          .paymentMethod as PaymentMethod,
+        status: savedOrder.orderStatus as OrderStatus,
+        address: savedOrder.ShippingDetails.address,
+      });
+    });
   }
 }

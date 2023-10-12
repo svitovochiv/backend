@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard, CSession, Session } from '../auth';
 import { ReqSubmitBasket, ShippingDetails, SubmitBasket } from '../../domain';
 import { OrderService } from './order.service';
@@ -27,5 +27,12 @@ export class OrderController {
         }),
       }),
     );
+  }
+
+  @Get()
+  @UseGuards(new AuthGuard())
+  getOrders(@Session() session: CSession) {
+    const userId = session.getAccessTokenPayload().appUserId;
+    return this.orderService.getOrdersByUserId({ userId });
   }
 }

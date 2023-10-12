@@ -46,6 +46,18 @@ export class OrderRepository {
     });
   }
 
+  getOrdersByUserId({ userId }: { userId: string }) {
+    return this.order.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        ShippingDetails: true,
+        OrderedProduct: true,
+      },
+    });
+  }
+
   private get order() {
     return this.db.order;
   }
