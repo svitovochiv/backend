@@ -11,6 +11,7 @@ import {
   PaymentMethod,
   SubmitBasket,
 } from '../../domain';
+import { CurrencyUtil } from '../../util';
 
 @Injectable()
 export class OrderService {
@@ -67,7 +68,7 @@ export class OrderService {
         },
         0,
       );
-      const totalPriceRounded = Math.round(totalPrice * 100) / 100;
+      const totalPriceRounded = CurrencyUtil.round(totalPrice);
       return new OrderMinimalInfoDto({
         id: savedOrder.id,
         createdAt: savedOrder.createdAt,
@@ -77,6 +78,33 @@ export class OrderService {
           .paymentMethod as PaymentMethod,
         status: savedOrder.orderStatus as OrderStatus,
         address: savedOrder.ShippingDetails.address,
+        contactNumber: savedOrder.ShippingDetails.number,
+        recipient: `${savedOrder.ShippingDetails.firstName} ${savedOrder.ShippingDetails.lastName}`,
+      });
+    });
+  }
+
+  async getAllOrders() {
+    const savedOrders = await this.orderRepository.getAllOrders();
+    return savedOrders.map((savedOrder) => {
+      const totalPrice = savedOrder.OrderedProduct.reduce(
+        (acc, orderedProduct) => {
+          return acc + orderedProduct.price * orderedProduct.count;
+        },
+        0,
+      );
+      const totalPriceRounded = CurrencyUtil.round(totalPrice);
+      return new OrderMinimalInfoDto({
+        id: savedOrder.id,
+        createdAt: savedOrder.createdAt,
+        updatedAt: savedOrder.updatedAt,
+        totalPrice: totalPriceRounded,
+        paymentMethod: savedOrder.ShippingDetails
+          .paymentMethod as PaymentMethod,
+        status: savedOrder.orderStatus as OrderStatus,
+        address: savedOrder.ShippingDetails.address,
+        contactNumber: savedOrder.ShippingDetails.number,
+        recipient: `${savedOrder.ShippingDetails.firstName} ${savedOrder.ShippingDetails.lastName}`,
       });
     });
   }

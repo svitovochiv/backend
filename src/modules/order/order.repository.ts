@@ -51,6 +51,21 @@ export class OrderRepository {
       where: {
         userId,
       },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      include: {
+        ShippingDetails: true,
+        OrderedProduct: true,
+      },
+    });
+  }
+
+  getAllOrders() {
+    return this.order.findMany({
+      orderBy: {
+        updatedAt: 'desc',
+      },
       include: {
         ShippingDetails: true,
         OrderedProduct: true,

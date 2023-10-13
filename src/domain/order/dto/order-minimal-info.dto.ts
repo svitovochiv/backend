@@ -9,6 +9,8 @@ export class OrderMinimalInfoDto {
   paymentMethod: PaymentMethod;
   address: string;
   totalPrice: number;
+  recipient: string;
+  contactNumber: string;
 
   constructor(data: OrderMinimalInfoDto) {
     this.id = data.id;
@@ -18,5 +20,7 @@ export class OrderMinimalInfoDto {
     this.paymentMethod = data.paymentMethod;
     this.totalPrice = data.totalPrice;
     this.address = data.address;
+    this.recipient = data.recipient;
+    this.contactNumber = data.contactNumber;
   }
 }

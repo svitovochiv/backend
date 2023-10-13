@@ -31,8 +31,14 @@ export class OrderController {
 
   @Get()
   @UseGuards(new AuthGuard())
-  getOrders(@Session() session: CSession) {
+  getUserOrders(@Session() session: CSession) {
     const userId = session.getAccessTokenPayload().appUserId;
     return this.orderService.getOrdersByUserId({ userId });
+  }
+
+  @Get('all')
+  @UseGuards(new AuthGuard())
+  getAllOrders() {
+    return this.orderService.getAllOrders();
   }
 }
