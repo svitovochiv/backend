@@ -89,6 +89,9 @@ export class OrderRepository {
           include: {
             product: true,
           },
+          orderBy: {
+            id: 'asc',
+          },
         },
         user: true,
       },

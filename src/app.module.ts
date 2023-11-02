@@ -13,7 +13,7 @@ import { HttpExceptionFilter } from './exceptions';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { BasketModule } from './modules/basket';
 import { UserReadModule } from './modules/user-read';
-import { SumAggregatorModule } from './modules/sum-aggregator';
+import { ProductFinancialCalculatorModule } from './modules/product-financical-calculator';
 
 @Module({
   imports: [
@@ -45,7 +45,7 @@ import { SumAggregatorModule } from './modules/sum-aggregator';
         },
       }),
     }),
-    SumAggregatorModule,
+    ProductFinancialCalculatorModule,
     BasketModule,
     ProductModule,
     OrderModule,

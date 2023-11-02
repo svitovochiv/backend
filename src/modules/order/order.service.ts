@@ -17,14 +17,14 @@ import {
 } from '../../domain';
 import { CurrencyUtil } from '../../util';
 import { BadRequestError } from '../../exceptions';
-import { SumAggregatorService } from '../sum-aggregator';
+import { ProductFinancialCalculatorService } from '../product-financical-calculator';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly basketService: BasketService,
-    private readonly sumAggregatorService: SumAggregatorService,
+    private readonly sumAggregatorService: ProductFinancialCalculatorService,
   ) {}
 
   async submitOrder(submitBasket: SubmitBasket) {
@@ -95,18 +95,15 @@ export class OrderService {
   async getAllOrders() {
     const savedOrders = await this.orderRepository.getAllOrders();
     return savedOrders.map((savedOrder) => {
-      const totalPrice = savedOrder.OrderedProduct.reduce(
-        (acc, orderedProduct) => {
-          return acc + orderedProduct.price * orderedProduct.count;
-        },
-        0,
+      const totalPrice = this.sumAggregatorService.totalSumProducts(
+        savedOrder.OrderedProduct,
       );
-      const totalPriceRounded = CurrencyUtil.round(totalPrice);
+
       return new OrderMinimalInfoDto({
         id: savedOrder.id,
         createdAt: savedOrder.createdAt,
         updatedAt: savedOrder.updatedAt,
-        totalPrice: totalPriceRounded,
+        totalPrice: totalPrice,
         paymentMethod: savedOrder.ShippingDetails
           .paymentMethod as PaymentMethod,
         status: savedOrder.orderStatus as OrderStatus,

@@ -3,21 +3,25 @@ import { Injectable } from '@nestjs/common';
 import {
   BasketMinimalProductInfoDto,
   BasketSumDto,
+  CountAndPrice,
   CreateBasketDto,
   GetBasketByUserIdDto,
   ProductsInBasketDto,
   Quantity,
-  SubmitBasket,
   UpdateBasketProductByUserIdDto,
   UpdateBasketProductDto,
 } from '../../domain';
 import { DeleteProductInBasketDto } from '../../domain/order/dto/delete-product-in-basket.dto';
 import { QuantityUtil } from '../../util';
+import { ProductFinancialCalculatorService } from '../product-financical-calculator';
 
 @Injectable()
 export class BasketService {
   private readonly quantityUtil = new QuantityUtil();
-  constructor(private readonly basketRepository: BasketRepository) {}
+  constructor(
+    private readonly basketRepository: BasketRepository,
+    private readonly sumAggregatorService: ProductFinancialCalculatorService,
+  ) {}
 
   async deleteProduct(deleteProductDto: DeleteProductInBasketDto) {
     const basket = await this.basketRepository.getBasketProductByUserId(
@@ -40,8 +44,11 @@ export class BasketService {
         }),
       );
     } else {
-      updateBasketProductDto.count =
-        Math.round(updateBasketProductDto.count * 100) / 100;
+      // updateBasketProductDto.count =
+      //   Math.round(updateBasketProductDto.count * 100) / 100;
+      updateBasketProductDto.count = this.sumAggregatorService.normalizeCount(
+        updateBasketProductDto.count,
+      );
 
       const basket = await this.getOrCreateBasket(
         new CreateBasketDto({
@@ -95,12 +102,17 @@ export class BasketService {
       await this.basketRepository.getOrderedProductsUserId({
         userId: data.userId,
       });
-    const sum = productsInBasket.reduce((acc, product) => {
-      const count = product.count.toNumber();
-      const price = product.product.price;
-      const sum = count * price;
-      return acc + sum;
-    }, 0);
+    const formattedProductsInBasket: CountAndPrice[] = productsInBasket.map(
+      (product) => {
+        return {
+          count: product.count.toNumber(),
+          price: product.product.price,
+        };
+      },
+    );
+    const sum = this.sumAggregatorService.totalSumProducts(
+      formattedProductsInBasket,
+    );
 
     return new BasketSumDto({
       sum,
@@ -116,9 +128,10 @@ export class BasketService {
       const quantity =
         this.quantityUtil.normalizeQuantity(productInBasket.product.quantity) ||
         Quantity.Kilogram;
-      let sum =
-        productInBasket.count.toNumber() * productInBasket.product.price;
-      sum = Math.round(sum * 100) / 100;
+      const sum = this.sumAggregatorService.sumProduct({
+        count: productInBasket.count.toNumber(),
+        price: productInBasket.product.price,
+      });
       return new ProductsInBasketDto({
         name: productInBasket.product.name,
         productId: productInBasket.productId,

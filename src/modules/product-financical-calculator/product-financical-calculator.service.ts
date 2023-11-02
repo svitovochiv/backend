@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import {
-  CountAndPriceDto,
+  CountAndPrice,
   OrderedProduct,
   OrderedProductWithSumDto,
 } from '../../domain';
 import { CurrencyUtil } from '../../util';
 
 @Injectable()
-export class SumAggregatorService {
-  totalSumProducts(products: CountAndPriceDto[]) {
+export class ProductFinancialCalculatorService {
+  totalSumProducts(products: CountAndPrice[]) {
     const sum = products.reduce((acc, orderedProduct) => {
       return acc + orderedProduct.price * orderedProduct.count;
     }, 0);
     return CurrencyUtil.round(sum);
   }
 
-  sumProduct(product: CountAndPriceDto) {
+  sumProduct(product: CountAndPrice) {
     return CurrencyUtil.round(product.price * product.count);
   }
 
@@ -26,5 +26,9 @@ export class SumAggregatorService {
         sum: this.sumProduct(product),
       });
     });
+  }
+
+  normalizeCount(count: number) {
+    return Math.round(count * 100) / 100;
   }
 }

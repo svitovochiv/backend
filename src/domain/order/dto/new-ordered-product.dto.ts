@@ -1,11 +1,14 @@
-import { CountAndPriceDto } from '../../sum-aggregator';
+import { CountAndPrice } from '../../sum-aggregator';
 
-export class NewOrderedProductDto extends CountAndPriceDto {
+export class NewOrderedProductDto implements CountAndPrice {
   name: string;
   productId: string;
+  count: number;
+  price: number;
   constructor(data: NewOrderedProductDto) {
-    super(data);
     this.productId = data.productId;
     this.name = data.name;
+    this.count = data.count;
+    this.price = data.price;
   }
 }
