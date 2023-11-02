@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma';
-import { AddOrderedProducts, CreateOrder, ShippingDetails } from '../../domain';
+import {
+  AddOrderedProducts,
+  CreateOrder,
+  GetOrderDto,
+  ShippingDetails,
+} from '../../domain';
 
 import { Prisma } from '@prisma/client';
 
@@ -69,6 +74,19 @@ export class OrderRepository {
       include: {
         ShippingDetails: true,
         OrderedProduct: true,
+      },
+    });
+  }
+
+  getOrderById({ id }: GetOrderDto) {
+    return this.order.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        ShippingDetails: true,
+        OrderedProduct: true,
+        user: true,
       },
     });
   }

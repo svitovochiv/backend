@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import {
+  AuthGuard,
   AuthModule,
   OnAppInitModule,
   OrderModule,
@@ -9,11 +10,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { appConfig } from './config';
 import { MulterModule } from '@nestjs/platform-express';
 import { HttpExceptionFilter } from './exceptions';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { BasketModule } from './modules/basket';
+import { UserReadModule } from './modules/user-read';
+import { SumAggregatorModule } from './modules/sum-aggregator';
 
 @Module({
   imports: [
+    UserReadModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [appConfig],
@@ -41,6 +45,7 @@ import { BasketModule } from './modules/basket';
         },
       }),
     }),
+    SumAggregatorModule,
     BasketModule,
     ProductModule,
     OrderModule,
@@ -51,6 +56,10 @@ import { BasketModule } from './modules/basket';
     {
       useClass: HttpExceptionFilter,
       provide: APP_FILTER,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
     },
   ],
 })

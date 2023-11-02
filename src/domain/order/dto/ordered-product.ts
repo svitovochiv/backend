@@ -1,11 +1,10 @@
-export class OrderedProduct {
-  count: number;
-  price: number;
+import { SumProductInfoDto } from '../../sum-aggregator';
+
+export class OrderedProduct extends SumProductInfoDto {
   productId: string;
   orderId?: string;
   constructor(data: OrderedProduct) {
-    this.count = data.count;
-    this.price = data.price;
+    super(data);
     this.productId = data.productId;
     this.orderId = data.orderId;
   }

@@ -4,7 +4,9 @@ import { BasketService } from '../basket';
 import {
   AddOrderedProducts,
   CreateOrder,
+  FullOrderInfoDto,
   GetBasketByUserIdDto,
+  GetOrderDto,
   OrderedProduct,
   OrderMinimalInfoDto,
   OrderStatus,
@@ -12,12 +14,15 @@ import {
   SubmitBasket,
 } from '../../domain';
 import { CurrencyUtil } from '../../util';
+import { BadRequestError } from '../../exceptions';
+import { SumAggregatorService } from '../sum-aggregator';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly basketService: BasketService,
+    private readonly sumAggregatorService: SumAggregatorService,
   ) {}
 
   async submitOrder(submitBasket: SubmitBasket) {
@@ -106,6 +111,40 @@ export class OrderService {
         contactNumber: savedOrder.ShippingDetails.number,
         recipient: `${savedOrder.ShippingDetails.firstName} ${savedOrder.ShippingDetails.lastName}`,
       });
+    });
+  }
+
+  async getOrderById(getOrderDto: GetOrderDto) {
+    const savedOrder = await this.orderRepository.getOrderById(getOrderDto);
+    if (!savedOrder) {
+      throw new BadRequestError(
+        `замовлення з id: ${getOrderDto.id} не знайдено`,
+      );
+    }
+
+    const orderedProducts: OrderedProduct[] = savedOrder.OrderedProduct.map(
+      (orderedProduct) => {
+        return new OrderedProduct({
+          count: orderedProduct.count,
+          price: orderedProduct.price,
+          productId: orderedProduct.productId,
+        });
+      },
+    );
+
+    const totalPrice = this.sumAggregatorService.sumProducts(orderedProducts);
+
+    return new FullOrderInfoDto({
+      id: savedOrder.id,
+      createdAt: savedOrder.createdAt,
+      updatedAt: savedOrder.updatedAt,
+      totalPrice: totalPrice,
+      paymentMethod: savedOrder.ShippingDetails.paymentMethod as PaymentMethod,
+      status: savedOrder.orderStatus as OrderStatus,
+      address: savedOrder.ShippingDetails.address,
+      contactNumber: savedOrder.ShippingDetails.number,
+      recipient: `${savedOrder.ShippingDetails.firstName} ${savedOrder.ShippingDetails.lastName}`,
+      orderedProducts: orderedProducts,
     });
   }
 }

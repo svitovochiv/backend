@@ -1,7 +1,14 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard, CSession, Session } from '../auth';
-import { ReqSubmitBasket, ShippingDetails, SubmitBasket } from '../../domain';
+import {
+  GetOrderDto,
+  ReqSubmitBasket,
+  ShippingDetails,
+  SubmitBasket,
+  UserDto,
+} from '../../domain';
 import { OrderService } from './order.service';
+import { Executor } from '../user';
 
 @Controller('order')
 export class OrderController {
@@ -37,8 +44,14 @@ export class OrderController {
   }
 
   @Get('all')
-  @UseGuards(new AuthGuard())
-  getAllOrders() {
+  getAllOrders(@Executor() executor?: UserDto) {
+    console.log('executor: ', executor);
     return this.orderService.getAllOrders();
+  }
+
+  @Get(':id')
+  @UseGuards(new AuthGuard())
+  getOrderById(@Session() session: CSession, @Param('id') id: string) {
+    return this.orderService.getOrderById(new GetOrderDto({ id }));
   }
 }

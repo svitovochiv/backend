@@ -9,3 +9,4 @@ export * from './products-in-basket.dto';
 export * from './shipping-details';
 export * from './ordered-product';
 export * from './order-minimal-info.dto';
+export * from './full-order-info.dto';
