@@ -85,7 +85,11 @@ export class OrderRepository {
       },
       include: {
         ShippingDetails: true,
-        OrderedProduct: true,
+        OrderedProduct: {
+          include: {
+            product: true,
+          },
+        },
         user: true,
       },
     });

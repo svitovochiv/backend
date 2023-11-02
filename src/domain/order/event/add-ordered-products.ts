@@ -1,8 +1,8 @@
-import { OrderedProduct } from '../dto';
+import { NewOrderedProductDto } from '../dto';
 
 export class AddOrderedProducts {
   orderId: string;
-  orderedProducts: OrderedProduct[];
+  orderedProducts: NewOrderedProductDto[];
   constructor(data: AddOrderedProducts) {
     this.orderId = data.orderId;
     this.orderedProducts = data.orderedProducts;

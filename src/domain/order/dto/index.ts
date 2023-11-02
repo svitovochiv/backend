@@ -10,3 +10,5 @@ export * from './shipping-details';
 export * from './ordered-product';
 export * from './order-minimal-info.dto';
 export * from './full-order-info.dto';
+export * from './new-ordered-product.dto';
+export * from './ordered-product-with-sum.dto';

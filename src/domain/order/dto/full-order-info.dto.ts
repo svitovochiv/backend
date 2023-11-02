@@ -1,6 +1,7 @@
 import { OrderStatus } from '../order-status';
 import { PaymentMethod } from '../payment-method';
 import { OrderedProduct } from './ordered-product';
+import { OrderedProductWithSumDto } from './ordered-product-with-sum.dto';
 
 export class FullOrderInfoDto {
   id: string;
@@ -12,7 +13,7 @@ export class FullOrderInfoDto {
   totalPrice: number;
   recipient: string;
   contactNumber: string;
-  orderedProducts: OrderedProduct[];
+  orderedProducts: OrderedProductWithSumDto[];
 
   constructor(data: FullOrderInfoDto) {
     this.id = data.id;

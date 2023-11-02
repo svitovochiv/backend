@@ -1,7 +1,7 @@
-export class SumProductInfoDto {
+export class CountAndPriceDto {
   price: number;
   count: number;
-  constructor(data: SumProductInfoDto) {
+  constructor(data: CountAndPriceDto) {
     this.price = data.price;
     this.count = data.count;
   }

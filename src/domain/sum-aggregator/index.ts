@@ -1,1 +1,1 @@
-export * from './sum-product-info.dto';
+export * from './count-and-price.dto';

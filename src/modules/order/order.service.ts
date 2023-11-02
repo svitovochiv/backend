@@ -7,6 +7,7 @@ import {
   FullOrderInfoDto,
   GetBasketByUserIdDto,
   GetOrderDto,
+  NewOrderedProductDto,
   OrderedProduct,
   OrderMinimalInfoDto,
   OrderStatus,
@@ -26,20 +27,6 @@ export class OrderService {
   ) {}
 
   async submitOrder(submitBasket: SubmitBasket) {
-    const orderedProducts: OrderedProduct[] = (
-      await this.basketService.getProductsInBasket(
-        new GetBasketByUserIdDto({
-          userId: submitBasket.userId,
-        }),
-      )
-    ).map((product) => {
-      return new OrderedProduct({
-        productId: product.productId,
-        count: product.count,
-        price: product.price,
-      });
-    });
-
     const createdShippingDetails =
       await this.orderRepository.createShippingDetails(
         submitBasket.shippingDetails,
@@ -49,6 +36,21 @@ export class OrderService {
       userId: submitBasket.userId,
       shippingDetailsId: createdShippingDetails.id,
     });
+    const orderedProducts: NewOrderedProductDto[] = (
+      await this.basketService.getProductsInBasket(
+        new GetBasketByUserIdDto({
+          userId: submitBasket.userId,
+        }),
+      )
+    ).map((product) => {
+      return new NewOrderedProductDto({
+        productId: product.productId,
+        count: product.count,
+        price: product.price,
+        name: product.name,
+      });
+    });
+
     const createdOrder = await this.orderRepository.createOrder(createOrder);
     await this.orderRepository.addOrderedProducts(
       new AddOrderedProducts({
@@ -128,11 +130,17 @@ export class OrderService {
           count: orderedProduct.count,
           price: orderedProduct.price,
           productId: orderedProduct.productId,
+          name: orderedProduct.product.name,
+          orderId: orderedProduct.orderId,
         });
       },
     );
 
-    const totalPrice = this.sumAggregatorService.sumProducts(orderedProducts);
+    const totalPrice =
+      this.sumAggregatorService.totalSumProducts(orderedProducts);
+
+    const orderedProductsWithSum =
+      this.sumAggregatorService.sumOrderedProducts(orderedProducts);
 
     return new FullOrderInfoDto({
       id: savedOrder.id,
@@ -144,7 +152,7 @@ export class OrderService {
       address: savedOrder.ShippingDetails.address,
       contactNumber: savedOrder.ShippingDetails.number,
       recipient: `${savedOrder.ShippingDetails.firstName} ${savedOrder.ShippingDetails.lastName}`,
-      orderedProducts: orderedProducts,
+      orderedProducts: orderedProductsWithSum,
     });
   }
 }
