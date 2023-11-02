@@ -12,6 +12,7 @@ import {
   OrderMinimalInfoDto,
   OrderStatus,
   PaymentMethod,
+  Quantity,
   SubmitBasket,
 } from '../../domain';
 import { CurrencyUtil } from '../../util';
@@ -132,6 +133,7 @@ export class OrderService {
           productId: orderedProduct.productId,
           name: orderedProduct.product.name,
           orderId: orderedProduct.orderId,
+          quantity: orderedProduct.product.quantity as Quantity,
         });
       },
     );
