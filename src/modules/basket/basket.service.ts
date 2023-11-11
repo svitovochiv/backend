@@ -45,7 +45,6 @@ export class BasketService {
       );
     } else {
       // updateBasketProductDto.count =
-      //   Math.round(updateBasketProductDto.count * 100) / 100;
       updateBasketProductDto.count = this.sumAggregatorService.normalizeCount(
         updateBasketProductDto.count,
       );

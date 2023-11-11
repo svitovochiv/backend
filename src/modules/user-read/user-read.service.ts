@@ -12,6 +12,7 @@ export class UserReadService {
       throw new BadRequestException('User not found');
     }
     return new UserDto({
+      id: savedUser.id,
       email: savedUser.email,
       firstName: savedUser.firstName ? savedUser.firstName : undefined,
       lastName: savedUser.lastName ? savedUser.lastName : undefined,

@@ -74,12 +74,11 @@ export class OrderService {
         savedOrder.OrderedProduct,
       );
 
-      const totalPriceRounded = CurrencyUtil.round(totalPrice);
       return new OrderMinimalInfoDto({
         id: savedOrder.id,
         createdAt: savedOrder.createdAt,
         updatedAt: savedOrder.updatedAt,
-        totalPrice: totalPriceRounded,
+        totalPrice: totalPrice,
         paymentMethod: savedOrder.ShippingDetails
           .paymentMethod as PaymentMethod,
         status: savedOrder.orderStatus as OrderStatus,
