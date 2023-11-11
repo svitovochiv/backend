@@ -70,12 +70,10 @@ export class OrderService {
       userId,
     });
     return savedOrders.map((savedOrder) => {
-      const totalPrice = savedOrder.OrderedProduct.reduce(
-        (acc, orderedProduct) => {
-          return acc + orderedProduct.price * orderedProduct.count;
-        },
-        0,
+      const totalPrice = this.sumAggregatorService.totalSumProducts(
+        savedOrder.OrderedProduct,
       );
+
       const totalPriceRounded = CurrencyUtil.round(totalPrice);
       return new OrderMinimalInfoDto({
         id: savedOrder.id,
