@@ -6,6 +6,7 @@ import { CSession } from './interface';
 import { UserReadService } from '../user-read';
 import { IS_PUBLIC_KEY } from './is-public.decorator';
 import { Reflector } from '@nestjs/core';
+import { BadRequestError } from '../../exceptions';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -46,8 +47,10 @@ export class AuthGuard implements CanActivate {
     const session: CSession = ctx.getRequest().session;
     const userId = session.getAccessTokenPayload().appUserId;
 
+    if (!userId) {
+      throw new BadRequestError('User without id try to access');
+    }
     if (this.userService) {
-      console.log('service');
       request.userData = await this.userService?.getUserById({ id: userId });
       console.log(request.userData);
     }

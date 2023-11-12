@@ -12,6 +12,18 @@ export class ProductRepository {
     });
   }
 
+  // TODO optimize this method
+  async updateManyProducts(addProductDtos: AddProductDto[]) {
+    for (const addProductDtoItem of addProductDtos) {
+      await this.product.update({
+        data: addProductDtoItem,
+        where: {
+          name: addProductDtoItem.name,
+        },
+      });
+    }
+  }
+
   deactivateProducts(productNames: string[]) {
     return this.product.updateMany({
       where: {
@@ -26,7 +38,11 @@ export class ProductRepository {
   }
 
   getProducts() {
-    return this.product.findMany();
+    return this.product.findMany({
+      orderBy: {
+        name: 'asc',
+      },
+    });
   }
 
   private get product() {

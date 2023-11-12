@@ -24,7 +24,6 @@ export class UserService {
         role: savedUser.role as Role,
       });
     }
-    throw new BadRequestError('Користувача не знайдено');
   }
 
   create(createUserDto: CreateUserDto) {

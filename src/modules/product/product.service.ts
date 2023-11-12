@@ -33,6 +33,7 @@ export class ProductService {
         existedProductsMap.set(product.name, product);
       });
       const productsToAdd: AddProductDto[] = [];
+      const productsToUpdate: AddProductDto[] = [];
       const uploadedProductsNames = new Set<string>();
 
       uploadedProducts.forEach((newProduct) => {
@@ -49,6 +50,17 @@ export class ProductService {
             isActive: true,
           });
           productsToAdd.push(productToAdd);
+        } else {
+          const existedProduct = existedProductsMap.get(newProduct.name);
+          if (existedProduct) {
+            const productToUpdate = new AddProductDto({
+              name: newProduct.name,
+              quantity: newProduct.quantity,
+              price: newProduct.price,
+              isActive: true,
+            });
+            productsToUpdate.push(productToUpdate);
+          }
         }
       });
       const productsToDeactivate: string[] = [];
@@ -58,6 +70,7 @@ export class ProductService {
         }
       });
       await this.productRepository.addManyProducts(productsToAdd);
+      await this.productRepository.updateManyProducts(productsToUpdate);
       await this.productRepository.deactivateProducts(productsToDeactivate);
     }
   }
