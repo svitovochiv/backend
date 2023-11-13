@@ -26,12 +26,12 @@ jobs:
                    SUPERTOKENS_EXTERNAL_PORT=3567 \n
                    #DATABASE_HOST=localhost \n
                    SUPERTOKENS_HOST=supertokens \n
-                   SUPERTOKENS_URL=http://${SUPERTOKENS_HOST}:${SUPERTOKENS_EXTERNAL_PORT} \n
+                   SUPERTOKENS_URL=http://supertokens:3567 \n
 
-                   API_URL=http://localhost:80 \n
-                   WEBSITE_URL=http://localhost:3000 \n
-                   CLIENT_WEBSITE_URL=http://localhost:3001 \n
-                   WEBSITE_DOMAIN=http://localhost \n
+                   API_URL=Backend-env.eba-8sfmdrgd.eu-central-1.elasticbeanstalk.com \n
+                   WEBSITE_URL=Client-frontend-v9-env.eba-radm4shm.eu-central-1.elasticbeanstalk.com \n
+                   CLIENT_WEBSITE_URL=Frontend-admin-env.eba-m9r6cfm7.eu-central-1.elasticbeanstalk.com \n
+                   WEBSITE_DOMAIN=Backend-env.eba-8sfmdrgd.eu-central-1.elasticbeanstalk.com \n
           " >> .env && cat .env
       - name: Generate deployment package
         run: zip -r deploy.zip . -x '*.git*'
