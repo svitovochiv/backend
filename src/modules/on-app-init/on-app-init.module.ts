@@ -75,6 +75,10 @@ export class OnAppInitModule {
 
   async onModuleInit() {
     console.info('OnAppInitModule started');
-    await this.createUser(MockUsers);
+    try {
+      await this.createUser(MockUsers);
+    } catch (e) {
+      console.error('error when creating user');
+    }
   }
 }

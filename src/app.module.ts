@@ -14,6 +14,7 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { BasketModule } from './modules/basket';
 import { UserReadModule } from './modules/user-read';
 import { ProductFinancialCalculatorModule } from './modules/product-financical-calculator';
+import { HealthyModule } from './healthy';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { ProductFinancialCalculatorModule } from './modules/product-financical-c
     ProductModule,
     OrderModule,
     OnAppInitModule,
+    HealthyModule,
   ],
   controllers: [],
   providers: [
