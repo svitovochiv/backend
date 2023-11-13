@@ -6,7 +6,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AuthGuard } from '../auth';
+import { AuthGuard, IsPublic } from '../auth';
 import { ProductService } from './product.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadProductViaFileDto } from '../../domain';
@@ -25,6 +25,7 @@ export class ProductController {
   }
 
   @Get()
+  @IsPublic()
   async getProducts() {
     return await this.productService.getProducts();
   }

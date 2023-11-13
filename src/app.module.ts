@@ -1,13 +1,23 @@
 import { Module } from '@nestjs/common';
-import { AuthModule, OnAppInitModule, ProductModule } from './modules';
+import {
+  AuthGuard,
+  AuthModule,
+  OnAppInitModule,
+  OrderModule,
+  ProductModule,
+} from './modules';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { appConfig } from './config';
 import { MulterModule } from '@nestjs/platform-express';
 import { HttpExceptionFilter } from './exceptions';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { BasketModule } from './modules/basket';
+import { UserReadModule } from './modules/user-read';
+import { ProductFinancialCalculatorModule } from './modules/product-financical-calculator';
 
 @Module({
   imports: [
+    UserReadModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [appConfig],
@@ -35,14 +45,21 @@ import { APP_FILTER } from '@nestjs/core';
         },
       }),
     }),
-    OnAppInitModule,
+    ProductFinancialCalculatorModule,
+    BasketModule,
     ProductModule,
+    OrderModule,
+    OnAppInitModule,
   ],
   controllers: [],
   providers: [
     {
       useClass: HttpExceptionFilter,
       provide: APP_FILTER,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
     },
   ],
 })

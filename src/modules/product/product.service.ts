@@ -32,8 +32,8 @@ export class ProductService {
       existedProducts.forEach((product) => {
         existedProductsMap.set(product.name, product);
       });
-      console.log('existedProductsMap', existedProductsMap);
       const productsToAdd: AddProductDto[] = [];
+      const productsToUpdate: AddProductDto[] = [];
       const uploadedProductsNames = new Set<string>();
 
       uploadedProducts.forEach((newProduct) => {
@@ -50,9 +50,19 @@ export class ProductService {
             isActive: true,
           });
           productsToAdd.push(productToAdd);
+        } else {
+          const existedProduct = existedProductsMap.get(newProduct.name);
+          if (existedProduct) {
+            const productToUpdate = new AddProductDto({
+              name: newProduct.name,
+              quantity: newProduct.quantity,
+              price: newProduct.price,
+              isActive: true,
+            });
+            productsToUpdate.push(productToUpdate);
+          }
         }
       });
-      console.log('productsToAdd', productsToAdd);
       const productsToDeactivate: string[] = [];
       existedProducts.forEach((existedProduct) => {
         if (!uploadedProductsNames.has(existedProduct.name)) {
@@ -60,6 +70,7 @@ export class ProductService {
         }
       });
       await this.productRepository.addManyProducts(productsToAdd);
+      await this.productRepository.updateManyProducts(productsToUpdate);
       await this.productRepository.deactivateProducts(productsToDeactivate);
     }
   }
@@ -93,7 +104,6 @@ export class ProductService {
       endAdditionalInformationRowIndex > 0
         ? endAdditionalInformationRowIndex + 1
         : undefined;
-    console.log('startProductsInformationIndex', startProductsInformationIndex);
     if (startProductsInformationIndex) {
       parsedProductsRaw.splice(0, startProductsInformationIndex);
       const endProductsInformationIndex = parsedProductsRaw.findIndex(
@@ -101,7 +111,6 @@ export class ProductService {
       );
       parsedProductsRaw.splice(endProductsInformationIndex);
       const parsedProducts: ParsedProductDto[] = [];
-      console.log('parsedProductsRaw', parsedProductsRaw);
       parsedProductsRaw.forEach((values) => {
         const quantity = this.quantityUtil.normalizeQuantity(values[2]);
         if (!quantity) throw new Error(`Invalid quantity ${values[2]}`);
@@ -114,7 +123,6 @@ export class ProductService {
           }),
         );
       });
-      console.log('parsedProducts', parsedProducts);
       return parsedProducts;
     }
     throw new BadRequestError(

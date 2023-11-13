@@ -7,4 +7,10 @@ export const MockUsers: SignupUserDto[] = [
     lastName: 'Omelianenko',
     password: 'Bla123456',
   },
+  {
+    email: 'anton.omelyanenko.14+a3@gmail.com',
+    firstName: 'Anton2',
+    lastName: 'Omelianenko',
+    password: 'Bla123456',
+  },
 ];

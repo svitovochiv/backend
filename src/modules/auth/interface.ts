@@ -16,7 +16,7 @@ export interface IAuthAsyncConfig extends Pick<ModuleMetadata, 'imports'> {
   inject?: any[];
 }
 
-export interface IMSession extends SessionContainer {
+export interface CSession extends SessionContainer {
   getAccessTokenPayload: (userContext?: any) => ReturnType<
     SessionContainer['getAccessTokenPayload']
   > & {

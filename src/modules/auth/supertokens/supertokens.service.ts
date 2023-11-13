@@ -30,16 +30,20 @@ export class SupertokensService {
               return {
                 ...originalImplementation,
                 createNewSession: async function (input) {
-                  const user = await userService.getByAuthId(input.userId);
-                  // This goes in the access token, and is availble to read on the frontend.
-                  if (user) {
-                    input.accessTokenPayload = {
-                      ...input.accessTokenPayload,
-                      appUserId: user.id,
-                    };
-                  }
+                  try {
+                    const user = await userService.getByAuthId(input.userId);
+                    if (user) {
+                      input.accessTokenPayload = {
+                        ...input.accessTokenPayload,
+                        appUserId: user.id,
+                      };
+                    }
 
-                  return originalImplementation.createNewSession(input);
+                    return originalImplementation.createNewSession(input);
+                  } catch (e) {
+                    console.error('Failed to auth with google', e);
+                    throw e;
+                  }
                 },
               };
             },
@@ -53,29 +57,6 @@ export class SupertokensService {
               this.config.appInfo.websiteDomain + ':3001',
               this.config.appInfo.websiteDomain + ':3000',
             ];
-          },
-        }),
-        EmailVerification.init({
-          mode: 'OPTIONAL', // or "OPTIONAL"
-          emailDelivery: {
-            override: (originalImplementation) => {
-              return {
-                ...originalImplementation,
-                sendEmail: (input) => {
-                  return originalImplementation.sendEmail({
-                    ...input,
-                    // emailVerifyLink: input.emailVerifyLink.replace(
-                    //   `${this.configService.get(
-                    //     'WEBSITE_URL',
-                    //   )}/auth/verify-email`,
-                    //   `${this.configService.get(
-                    //     'WEBSITE_URL',
-                    //   )}/verificationLink`,
-                    // ),
-                  });
-                },
-              };
-            },
           },
         }),
         ThirdPartyEmailPassword.init({
@@ -152,9 +133,8 @@ export class SupertokensService {
                       await this.userService.create({
                         authId: response.user.id,
                         email: response.user.email,
-                        // TODO get client name from google
-                        firstName: 'Немає',
-                        lastName: 'Немає',
+                        // firstName: response.user.email.split('@')[0],
+                        // lastName: response.user.email.split('@')[1],
                       });
                     } catch (error) {
                       console.error(error);

@@ -1,14 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from './user.repository';
-import { CreateUserDto, CreateUserWithRoleDto, Role } from '../../domain';
+import {
+  CreateUserDto,
+  CreateUserWithRoleDto,
+  Role,
+  UserDto,
+} from '../../domain';
 import { MockUsers } from '../../mock/mock-users';
+import { BadRequestError } from '../../exceptions';
 
 @Injectable()
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  getByAuthId(authId: string) {
-    return this.userRepository.getByAuthId(authId);
+  async getByAuthId(authId: string) {
+    const savedUser = await this.userRepository.getByAuthId(authId);
+    if (savedUser) {
+      return new UserDto({
+        id: savedUser.id,
+        email: savedUser.email,
+        firstName: savedUser.firstName ? savedUser.firstName : undefined,
+        lastName: savedUser.lastName ? savedUser.lastName : undefined,
+        role: savedUser.role as Role,
+      });
+    }
   }
 
   create(createUserDto: CreateUserDto) {

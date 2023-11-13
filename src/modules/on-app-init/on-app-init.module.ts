@@ -12,7 +12,6 @@ export class OnAppInitModule {
   constructor(private readonly userService: UserService) {}
 
   private async createUser(creds: SignupUserDto[]) {
-    console.log('Creating mock users');
     for (const cred of creds) {
       const response = await EmailPassword.emailPasswordSignUp(
         '',
@@ -32,17 +31,43 @@ export class OnAppInitModule {
             resEmailVerificationToken.token,
           );
         }
-        const resUser = response.user;
-        const user = new CreateUserDto({
-          authId: resUser.id,
-          email: resUser.email,
-          firstName: cred.firstName,
-          lastName: cred.lastName,
-        });
-        // EmailPassword.
-        const createdUser = await this.userService.create(user);
-        console.info(`Mock user created: ${createdUser.email}`);
-      } else {
+        try {
+          const resUser = response.user;
+          const user = new CreateUserDto({
+            authId: resUser.id,
+            email: resUser.email,
+            firstName: cred.firstName,
+            lastName: cred.lastName,
+          });
+          // EmailPassword.
+          const createdUser = await this.userService.create(user);
+          console.info(`Mock user created: ${createdUser.email}`);
+        } catch (e) {
+          console.error(e);
+        }
+      } else if (response.status === 'EMAIL_ALREADY_EXISTS_ERROR') {
+        const supertokensUsers = await EmailPassword.getUsersByEmail(
+          '',
+          cred.email,
+        );
+
+        const supertokensUser = supertokensUsers[0];
+        if (supertokensUser) {
+          try {
+            const user = new CreateUserDto({
+              authId: supertokensUser.id,
+              email: cred.email,
+              firstName: cred.firstName,
+              lastName: cred.lastName,
+            });
+            // EmailPassword.
+            const createdUser = await this.userService.create(user);
+            console.info(`Mock user created: ${createdUser.email}`);
+          } catch (e) {
+            console.error(e);
+          }
+        }
+
         console.error(`Failed user creation: ${cred.email}`, response.status);
       }
     }
