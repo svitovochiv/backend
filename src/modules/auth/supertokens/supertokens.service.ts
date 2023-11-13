@@ -50,13 +50,37 @@ export class SupertokensService {
           },
         }),
         Multitenancy.init({
+          // eslint-disable-next-line @typescript-eslint/require-await
           getAllowedDomainsForTenantId: async () => {
             // query your db to get the allowed domain for the input tenantId
             // or you can make the tenantId equal to the sub domain itself
             return [
-              this.config.appInfo.websiteDomain + ':3001',
-              this.config.appInfo.websiteDomain + ':3000',
-            ];
+              this.configService.get<string>('WEBSITE_URL'),
+              this.configService.get<string>('CLIENT_WEBSITE_URL'),
+            ] as string[];
+          },
+        }),
+        EmailVerification.init({
+          mode: 'OPTIONAL', // or "OPTIONAL"
+          emailDelivery: {
+            override: (originalImplementation) => {
+              return {
+                ...originalImplementation,
+                sendEmail: (input) => {
+                  return originalImplementation.sendEmail({
+                    ...input,
+                    // emailVerifyLink: input.emailVerifyLink.replace(
+                    //   `${this.configService.get(
+                    //     'WEBSITE_URL',
+                    //   )}/auth/verify-email`,
+                    //   `${this.configService.get(
+                    //     'WEBSITE_URL',
+                    //   )}/verificationLink`,
+                    // ),
+                  });
+                },
+              };
+            },
           },
         }),
         ThirdPartyEmailPassword.init({

@@ -1,82 +1,19 @@
-import { UserModule, UserService } from '../user';
+import { UserModule } from '../user';
 import { Module } from '@nestjs/common';
-import EmailPassword from 'supertokens-node/recipe/thirdpartyemailpassword';
-import EmailVerification from 'supertokens-node/recipe/emailverification';
-import { CreateUserDto, SignupUserDto } from '../../domain';
 import { MockUsers } from '../../mock/mock-users';
+import { OnAppInitService } from './on-app-init.service';
 
 @Module({
   imports: [UserModule],
+  providers: [OnAppInitService],
 })
 export class OnAppInitModule {
-  constructor(private readonly userService: UserService) {}
-
-  private async createUser(creds: SignupUserDto[]) {
-    for (const cred of creds) {
-      const response = await EmailPassword.emailPasswordSignUp(
-        '',
-        cred.email,
-        cred.password,
-      );
-      if (response.status === 'OK') {
-        const resEmailVerificationToken =
-          await EmailVerification.createEmailVerificationToken(
-            'public',
-            response.user.id,
-          );
-        // If the token creation is successful, use the token to verify the user's email
-        if (resEmailVerificationToken.status === 'OK') {
-          await EmailVerification.verifyEmailUsingToken(
-            'public',
-            resEmailVerificationToken.token,
-          );
-        }
-        try {
-          const resUser = response.user;
-          const user = new CreateUserDto({
-            authId: resUser.id,
-            email: resUser.email,
-            firstName: cred.firstName,
-            lastName: cred.lastName,
-          });
-          // EmailPassword.
-          const createdUser = await this.userService.create(user);
-          console.info(`Mock user created: ${createdUser.email}`);
-        } catch (e) {
-          console.error(e);
-        }
-      } else if (response.status === 'EMAIL_ALREADY_EXISTS_ERROR') {
-        const supertokensUsers = await EmailPassword.getUsersByEmail(
-          '',
-          cred.email,
-        );
-
-        const supertokensUser = supertokensUsers[0];
-        if (supertokensUser) {
-          try {
-            const user = new CreateUserDto({
-              authId: supertokensUser.id,
-              email: cred.email,
-              firstName: cred.firstName,
-              lastName: cred.lastName,
-            });
-            // EmailPassword.
-            const createdUser = await this.userService.create(user);
-            console.info(`Mock user created: ${createdUser.email}`);
-          } catch (e) {
-            console.error(e);
-          }
-        }
-
-        console.error(`Failed user creation: ${cred.email}`, response.status);
-      }
-    }
-  }
+  constructor(private readonly onAppInitService: OnAppInitService) {}
 
   async onModuleInit() {
     console.info('OnAppInitModule started');
     try {
-      await this.createUser(MockUsers);
+      await this.onAppInitService.createUser(MockUsers);
     } catch (e) {
       console.error('error when creating user');
     }
