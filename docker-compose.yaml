@@ -27,7 +27,7 @@ services:
       context: .
       dockerfile: Dockerfile
     depends_on:
-      supertokens:
+      postgres:
         condition: service_healthy
     restart: always
     networks:
@@ -38,7 +38,9 @@ services:
 
   supertokens:
     image: registry.supertokens.io/supertokens/supertokens-postgresql:6.0
-
+    depends_on:
+      backend:
+        condition: service_healthy
     env_file:
       - .env
     ports:
