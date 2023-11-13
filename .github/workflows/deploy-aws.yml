@@ -19,9 +19,9 @@ jobs:
                    DATABASE_HOST=postgres \n
                    #DATABASE_EXTERNAL_PORT=5435 \n
                    #DATABASE_HOST=localhost \n
-                   DATABASE_URL_ORM=postgresql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_EXTERNAL_PORT}/${DATABASE_NAME} \n
+                   DATABASE_URL_ORM=postgresql://postgres:postgres@postgres:${DATABASE_EXTERNAL_PORT}/${DATABASE_NAME} \n
                    DATABASE_URL_DIRECT=postgresql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_EXTERNAL_PORT}/${DATABASE_NAME} \n
-                   DATABASE_URL_SUPERTOKENS=postgresql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@postgres:5432/${DATABASE_NAME} \n
+                   DATABASE_URL_SUPERTOKENS=postgresql://postgres:postgres@postgres:5432/app-db \n
 
                    SUPERTOKENS_EXTERNAL_PORT=3567 \n
                    #DATABASE_HOST=localhost \n
