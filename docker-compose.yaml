@@ -22,20 +22,20 @@ services:
     networks:
       - appNetwork
 
-#  backend:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    depends_on:
-#      supertokens:
-#        condition: service_healthy
-#    restart: always
-#    networks:
-#      - appNetwork
-#    ports:
-#      - '80:80'
-#
-#
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      supertokens:
+        condition: service_healthy
+    restart: always
+    networks:
+      - appNetwork
+    ports:
+      - '80:80'
+
+
   supertokens:
     image: registry.supertokens.io/supertokens/supertokens-postgresql:6.0
 
