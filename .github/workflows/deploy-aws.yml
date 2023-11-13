@@ -10,7 +10,7 @@ jobs:
       - name: fill envs
         run: >
           echo -e "NODE_ENV=development \n
-                   APP_PORT=8080 \n
+                   APP_PORT=80 \n
 
                    DATABASE_USERNAME=postgres \n
                    DATABASE_PASSWORD=postgres \n
@@ -19,7 +19,7 @@ jobs:
                    DATABASE_HOST=postgres \n
                    #DATABASE_EXTERNAL_PORT=5435 \n
                    #DATABASE_HOST=localhost \n
-                   DATABASE_URL_SUPERTOKENS=postgresql://postgres:postgres@postgres:5432/app-db
+                   DATABASE_URL_ORM=postgresql://postgres:postgres@postgres:5432/app-db
                    DATABASE_URL_DIRECT=postgresql://postgres:postgres@postgres:5432/app-db
                    DATABASE_URL_SUPERTOKENS=postgresql://postgres:postgres@postgres:5432/app-db \n
 
@@ -28,7 +28,7 @@ jobs:
                    SUPERTOKENS_HOST=supertokens \n
                    SUPERTOKENS_URL=http://${SUPERTOKENS_HOST}:${SUPERTOKENS_EXTERNAL_PORT} \n
 
-                   API_URL=http://localhost:8080 \n
+                   API_URL=http://localhost:80 \n
                    WEBSITE_URL=http://localhost:3000 \n
                    CLIENT_WEBSITE_URL=http://localhost:3001 \n
                    WEBSITE_DOMAIN=http://localhost \n
