@@ -7,7 +7,7 @@ services:
     ports:
       - ${DATABASE_EXTERNAL_PORT}:5432
     volumes:
-      - svitovochiv-db-volume:/var/lib/postgresql/data
+      - svitovochiv-db-volume-v2:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: ${DATABASE_USERNAME}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
@@ -23,6 +23,11 @@ services:
       - appNetwork
 
   backend:
+    healthcheck:
+      test: curl --fail http://localhost:80/api/healthy || exit 1
+      interval: 40s
+      timeout: 30s
+      retries: 5
     build:
       context: .
       dockerfile: Dockerfile
@@ -59,7 +64,7 @@ services:
 
 
 volumes:
-  svitovochiv-db-volume:
+  svitovochiv-db-volume-v2:
 
 networks:
   appNetwork:
