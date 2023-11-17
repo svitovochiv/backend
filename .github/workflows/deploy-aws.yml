@@ -19,9 +19,9 @@ jobs:
                    DATABASE_HOST=postgres \n
                    #DATABASE_EXTERNAL_PORT=5435 \n
                    #DATABASE_HOST=localhost \n
-                   DATABASE_URL_ORM=postgresql://postgres:postgres@postgres:5432/app-db
-                   DATABASE_URL_DIRECT=postgresql://postgres:postgres@postgres:5432/app-db
-                   DATABASE_URL_SUPERTOKENS=postgresql://postgres:postgres@postgres:5432/app-db \n
+                   DATABASE_URL_ORM=postgresql://anton:AVE_ASYA@database-2.cx9sniwb4zhh.eu-central-1.rds.amazonaws.com:5432/app
+                   DATABASE_URL_DIRECT=postgresql://anton:AVE_ASYA@database-2.cx9sniwb4zhh.eu-central-1.rds.amazonaws.com:5432/app
+                   DATABASE_URL_SUPERTOKENS=postgresql://anton:AVE_ASYA@database-2.cx9sniwb4zhh.eu-central-1.rds.amazonaws.com:5432/app \n
 
                    SUPERTOKENS_EXTERNAL_PORT=3567 \n
                    #DATABASE_HOST=localhost \n
