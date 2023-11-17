@@ -17,7 +17,30 @@ export class SupertokensService {
     @Inject(ConfigInjectionToken) private config: AuthModuleConfig,
   ) {
     supertokens.init({
-      appInfo: config.appInfo,
+      appInfo: {
+        apiDomain: config.appInfo.apiDomain,
+        appName: config.appInfo.appName,
+        apiBasePath: config.appInfo.apiBasePath,
+        websiteDomain: config.appInfo.websiteBasePath,
+        origin: (input) => {
+          console.log('config.appInfo.apiDomain: ', config.appInfo);
+          if (input.request !== undefined) {
+            const origin = input.request.getHeaderValue('origin');
+            console.log('origin: ', origin);
+            //
+            if (origin === undefined) {
+              // this means the client is in an iframe, it's a mobile app, or
+              // there is a privacy setting on the frontend which doesn't send
+              // the origin
+            } else {
+              return origin;
+            }
+          }
+          // in case the origin is unknown or not set, we return a default
+          // value which will be used for this request.
+          return 'https://test.example.com';
+        },
+      },
       supertokens: {
         connectionURI: config.connectionURI,
         apiKey: config.apiKey,
@@ -31,7 +54,9 @@ export class SupertokensService {
                 ...originalImplementation,
                 createNewSession: async function (input) {
                   try {
+                    console.log('input: ', input);
                     const user = await userService.getByAuthId(input.userId);
+                    console.log('user: ', user);
                     if (user) {
                       input.accessTokenPayload = {
                         ...input.accessTokenPayload,
@@ -156,7 +181,7 @@ export class SupertokensService {
                     try {
                       await this.userService.create({
                         authId: response.user.id,
-                        email: response.user.email,
+                        email: response.user.emails[0],
                         // firstName: response.user.email.split('@')[0],
                         // lastName: response.user.email.split('@')[1],
                       });

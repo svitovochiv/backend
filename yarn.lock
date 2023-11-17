@@ -5145,10 +5145,10 @@ supertokens-js-override@^0.0.4:
   resolved "https://registry.npmjs.org/supertokens-js-override/-/supertokens-js-override-0.0.4.tgz"
   integrity sha512-r0JFBjkMIdep3Lbk3JA+MpnpuOtw4RSyrlRAbrzMcxwiYco3GFWl/daimQZ5b1forOiUODpOlXbSOljP/oyurg==
 
-supertokens-node@^15.2.1:
-  version "15.2.1"
-  resolved "https://registry.npmjs.org/supertokens-node/-/supertokens-node-15.2.1.tgz"
-  integrity sha512-3zJ2EsiHYJHnYwAzDQI5Alp+4x/KcwEOBgeoPN5bWglZY0Xw0AzcZvd8S3N71vjLGvab0J3XxWmHeEHqSz5dbg==
+supertokens-node@^16.5.1:
+  version "16.5.1"
+  resolved "https://registry.yarnpkg.com/supertokens-node/-/supertokens-node-16.5.1.tgz#c19129514b6de426a456a16689fc0a9a762b0dc2"
+  integrity sha512-YjC5FvbOQb1viQ28xrLM7A6G9EJRLNNb5sJsIFORRExnHmdYlVLbOpe3pEwhU/4ct+I59e5qcIF1Z/Jg5uSSrQ==
   dependencies:
     content-type "^1.0.5"
     cookie "0.4.0"

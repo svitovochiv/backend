@@ -18,6 +18,7 @@ export class OnAppInitModule {
       await this.onAppInitService.createUser(MockUsers);
     } catch (e) {
       console.error('error when creating user');
+      console.error(e);
     }
   }
 }
