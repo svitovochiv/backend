@@ -30,7 +30,7 @@ jobs:
 
                    API_URL=Backend-env.eba-8sfmdrgd.eu-central-1.elasticbeanstalk.com \n
                    WEBSITE_URL=http://frontend-admin-env.eba-m9r6cfm7.eu-central-1.elasticbeanstalk.com \n
-                   CLIENT_WEBSITE_URL=Frontend-admin-env.eba-m9r6cfm7.eu-central-1.elasticbeanstalk.com \n
+                   CLIENT_WEBSITE_URL=http://client-frontend-v9-env.eba-radm4shm.eu-central-1.elasticbeanstalk.com \n
                    WEBSITE_DOMAIN=http://frontend-admin-env.eba-m9r6cfm7.eu-central-1.elasticbeanstalk.com \n
           " >> .env && cat .env
       - name: Generate deployment package
