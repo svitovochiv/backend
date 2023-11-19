@@ -29,7 +29,6 @@ services:
     depends_on:
       supertokens:
         condition: service_healthy
-    restart: always
     networks:
       - appNetwork
     ports:
