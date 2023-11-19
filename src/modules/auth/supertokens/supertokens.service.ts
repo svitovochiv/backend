@@ -82,6 +82,7 @@ export class SupertokensService {
             return [
               this.configService.get<string>('WEBSITE_URL'),
               this.configService.get<string>('CLIENT_WEBSITE_URL'),
+              this.configService.get<string>('ADMIN_AMPLIFY_URL'),
             ] as string[];
           },
         }),
