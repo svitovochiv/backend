@@ -14,7 +14,7 @@ jobs:
 
                    DATABASE_USERNAME=postgres \n
                    DATABASE_PASSWORD=postgres \n
-                   DATABASE_NAME=app  \n
+                   DATABASE_NAME=app-db  \n
                    DATABASE_EXTERNAL_PORT=5432 \n
                    DATABASE_HOST=postgres \n
                    #DATABASE_EXTERNAL_PORT=5435 \n

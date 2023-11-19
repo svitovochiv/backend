@@ -5,8 +5,7 @@ RUN npm i -g @nestjs/cli typescript ts-node
 
 COPY package*.json /tmp/app/
 COPY prisma /tmp/app/prisma/
-RUN cd /tmp/app && npm install
-RUN    npm run prisma:generate
+RUN cd /tmp/app && npm install && npm run prisma:generate
 
 COPY .env /usr/src/app/.env
 COPY . /usr/src/app
@@ -17,7 +16,6 @@ RUN chmod 775 /opt/startup.prod.sh
 
 WORKDIR /usr/src/app
 RUN npm run build
-RUN npm run migrate:deploy
 
 
 EXPOSE 80
