@@ -33,6 +33,7 @@ jobs:
                    CLIENT_WEBSITE_URL=http://client-frontend-v9-env.eba-radm4shm.eu-central-1.elasticbeanstalk.com \n
                    WEBSITE_DOMAIN=http://frontend-admin-env.eba-m9r6cfm7.eu-central-1.elasticbeanstalk.com \n
                    ADMIN_AMPLIFY_URL=https://manager.svitovochiv.com.ua \n
+                   CLIENT_AMPLIFY_URL=https://www.svitovochiv.com.ua \n
           " >> .env && cat .env
       - name: Generate deployment package
         run: zip -r deploy.zip . -x '*.git*'

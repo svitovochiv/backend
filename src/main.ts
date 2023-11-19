@@ -22,6 +22,7 @@ async function bootstrap() {
       configService.get('WEBSITE_DOMAIN') as string,
       configService.get('CLIENT_WEBSITE_URL') as string,
       configService.get('ADMIN_AMPLIFY_URL') as string,
+      configService.get('CLIENT_AMPLIFY_URL') as string,
     ],
     allowedHeaders: ['content-type', ...supertokens.getAllCORSHeaders()],
     credentials: true,
