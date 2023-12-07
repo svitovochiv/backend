@@ -8,6 +8,7 @@ import {
 } from '../../domain';
 
 import { Prisma } from '@prisma/client';
+import { GetOrderResDb } from './interface';
 
 @Injectable()
 export class OrderRepository {
@@ -51,29 +52,40 @@ export class OrderRepository {
     });
   }
 
-  getOrdersByUserId({ userId }: { userId: string }) {
+  // getOrdersByUserId({ userId }: { userId: string }) {
+  //   return this.order.findMany({
+  //     where: {
+  //       userId,
+  //     },
+  //     orderBy: {
+  //       updatedAt: 'desc',
+  //     },
+  //     include: {
+  //       ShippingDetails: true,
+  //       OrderedProduct: {
+  //         include: {
+  //           product: true,
+  //         },
+  //       },
+  //     },
+  //   });
+  // }
+
+  getOrders(query?: { userId?: string }): Promise<GetOrderResDb[]> {
     return this.order.findMany({
       where: {
-        userId,
+        userId: query?.userId,
       },
       orderBy: {
         updatedAt: 'desc',
       },
       include: {
         ShippingDetails: true,
-        OrderedProduct: true,
-      },
-    });
-  }
-
-  getAllOrders() {
-    return this.order.findMany({
-      orderBy: {
-        updatedAt: 'desc',
-      },
-      include: {
-        ShippingDetails: true,
-        OrderedProduct: true,
+        OrderedProduct: {
+          include: {
+            product: true,
+          },
+        },
       },
     });
   }

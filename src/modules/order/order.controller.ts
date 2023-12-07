@@ -21,7 +21,7 @@ export class OrderController {
     @Body() submitBasket: ReqSubmitBasket,
   ) {
     const userId = session.getAccessTokenPayload().appUserId;
-    return this.orderService.submitOrder(
+    return this.orderService.submitBasket(
       new SubmitBasket({
         userId,
         shippingDetails: new ShippingDetails({
@@ -40,7 +40,7 @@ export class OrderController {
   @UseGuards(new AuthGuard())
   getUserOrders(@Session() session: CSession) {
     const userId = session.getAccessTokenPayload().appUserId;
-    return this.orderService.getOrdersByUserId({ userId });
+    return this.orderService.getAllOrders({ userId });
   }
 
   @Get('all')

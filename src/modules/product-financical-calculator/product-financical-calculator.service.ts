@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import {
   CountAndPrice,
-  OrderedProduct,
+  OrderedProductDto,
+  OrderedProductWithProductDto,
   OrderedProductWithSumDto,
+  OrderStatus,
 } from '../../domain';
 import { CurrencyUtil } from '../../util';
 
@@ -19,7 +21,9 @@ export class ProductFinancialCalculatorService {
     return CurrencyUtil.round(product.price * product.count);
   }
 
-  sumOrderedProducts(products: OrderedProduct[]): OrderedProductWithSumDto[] {
+  sumOrderedProducts(
+    products: OrderedProductDto[],
+  ): OrderedProductWithSumDto[] {
     return products.map((product) => {
       return new OrderedProductWithSumDto({
         ...product,
@@ -30,5 +34,24 @@ export class ProductFinancialCalculatorService {
 
   normalizeCount(count: number) {
     return Math.round(count * 100) / 100;
+  }
+
+  getTotalSumProducts(
+    orderedProducts: OrderedProductWithProductDto[],
+    orderStatus: OrderStatus,
+  ) {
+    let totalPrice = 0;
+    if (orderStatus === OrderStatus.DELIVERED) {
+      totalPrice = this.totalSumProducts(orderedProducts);
+    } else {
+      const productsPriceAndCount = orderedProducts.map((orderedProduct) => {
+        return {
+          price: orderedProduct.product.price,
+          count: orderedProduct.count,
+        };
+      });
+      totalPrice = this.totalSumProducts(productsPriceAndCount);
+    }
+    return totalPrice;
   }
 }

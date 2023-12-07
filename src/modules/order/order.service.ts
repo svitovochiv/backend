@@ -8,16 +8,18 @@ import {
   GetBasketByUserIdDto,
   GetOrderDto,
   NewOrderedProductDto,
-  OrderedProduct,
+  OrderedProductDto,
+  OrderedProductWithProductDto,
   OrderMinimalInfoDto,
   OrderStatus,
   PaymentMethod,
+  ProductDto,
   Quantity,
   SubmitBasket,
 } from '../../domain';
-import { CurrencyUtil } from '../../util';
 import { BadRequestError } from '../../exceptions';
 import { ProductFinancialCalculatorService } from '../product-financical-calculator';
+import { OrderDbToDtoMapper } from '../../util/mapper';
 
 @Injectable()
 export class OrderService {
@@ -27,7 +29,7 @@ export class OrderService {
     private readonly sumAggregatorService: ProductFinancialCalculatorService,
   ) {}
 
-  async submitOrder(submitBasket: SubmitBasket) {
+  async submitBasket(submitBasket: SubmitBasket) {
     const createdShippingDetails =
       await this.orderRepository.createShippingDetails(
         submitBasket.shippingDetails,
@@ -65,35 +67,16 @@ export class OrderService {
     return createdOrder;
   }
 
-  async getOrdersByUserId({ userId }: { userId: string }) {
-    const savedOrders = await this.orderRepository.getOrdersByUserId({
-      userId,
-    });
+  async getAllOrders(query?: { userId?: string }) {
+    const savedOrders = await this.orderRepository.getOrders(query);
     return savedOrders.map((savedOrder) => {
-      const totalPrice = this.sumAggregatorService.totalSumProducts(
-        savedOrder.OrderedProduct,
-      );
+      const orderStatus = this.checkOrderStatusType(savedOrder.orderStatus);
 
-      return new OrderMinimalInfoDto({
-        id: savedOrder.id,
-        createdAt: savedOrder.createdAt,
-        updatedAt: savedOrder.updatedAt,
-        totalPrice: totalPrice,
-        paymentMethod: savedOrder.ShippingDetails
-          .paymentMethod as PaymentMethod,
-        status: savedOrder.orderStatus as OrderStatus,
-        address: savedOrder.ShippingDetails.address,
-        contactNumber: savedOrder.ShippingDetails.number,
-        recipient: `${savedOrder.ShippingDetails.firstName} ${savedOrder.ShippingDetails.lastName}`,
-      });
-    });
-  }
-
-  async getAllOrders() {
-    const savedOrders = await this.orderRepository.getAllOrders();
-    return savedOrders.map((savedOrder) => {
-      const totalPrice = this.sumAggregatorService.totalSumProducts(
-        savedOrder.OrderedProduct,
+      const mappedOrderedProducts =
+        OrderDbToDtoMapper.ItemGetOrderToOrderedProductsWithProduct(savedOrder);
+      const totalPrice = this.sumAggregatorService.getTotalSumProducts(
+        mappedOrderedProducts,
+        orderStatus,
       );
 
       return new OrderMinimalInfoDto({
@@ -119,9 +102,9 @@ export class OrderService {
       );
     }
 
-    const orderedProducts: OrderedProduct[] = savedOrder.OrderedProduct.map(
+    const orderedProducts: OrderedProductDto[] = savedOrder.OrderedProduct.map(
       (orderedProduct) => {
-        return new OrderedProduct({
+        return new OrderedProductDto({
           count: orderedProduct.count,
           price: orderedProduct.price,
           productId: orderedProduct.productId,
@@ -150,5 +133,15 @@ export class OrderService {
       recipient: `${savedOrder.ShippingDetails.firstName} ${savedOrder.ShippingDetails.lastName}`,
       orderedProducts: orderedProductsWithSum,
     });
+  }
+
+  checkOrderStatusType(orderStatus: string) {
+    const orderStatuses = Object.values(OrderStatus);
+    if (!orderStatuses.includes(orderStatus as OrderStatus)) {
+      throw new BadRequestError(
+        `Статус замовлення ${orderStatus} не підтримується`,
+      );
+    }
+    return orderStatus as OrderStatus;
   }
 }
