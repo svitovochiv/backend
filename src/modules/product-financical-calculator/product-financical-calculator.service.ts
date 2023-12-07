@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
   CountAndPrice,
-  OrderedProductDto,
   OrderedProductWithProductDto,
   OrderedProductWithSumDto,
   OrderStatus,
@@ -22,14 +21,30 @@ export class ProductFinancialCalculatorService {
   }
 
   sumOrderedProducts(
-    products: OrderedProductDto[],
+    products: OrderedProductWithProductDto[],
+    orderStatus: OrderStatus,
   ): OrderedProductWithSumDto[] {
-    return products.map((product) => {
-      return new OrderedProductWithSumDto({
-        ...product,
-        sum: this.sumProduct(product),
+    if (orderStatus === OrderStatus.DELIVERED) {
+      return products.map((orderedProduct) => {
+        return new OrderedProductWithSumDto({
+          ...orderedProduct,
+          sum: this.sumProduct({
+            price: orderedProduct.price,
+            count: orderedProduct.count,
+          }),
+        });
       });
-    });
+    } else {
+      return products.map((product) => {
+        return new OrderedProductWithSumDto({
+          ...product,
+          sum: this.sumProduct({
+            price: product.product.price,
+            count: product.count,
+          }),
+        });
+      });
+    }
   }
 
   normalizeCount(count: number) {
@@ -40,7 +55,7 @@ export class ProductFinancialCalculatorService {
     orderedProducts: OrderedProductWithProductDto[],
     orderStatus: OrderStatus,
   ) {
-    let totalPrice = 0;
+    let totalPrice: number;
     if (orderStatus === OrderStatus.DELIVERED) {
       totalPrice = this.totalSumProducts(orderedProducts);
     } else {

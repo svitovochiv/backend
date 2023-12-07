@@ -8,13 +8,9 @@ import {
   GetBasketByUserIdDto,
   GetOrderDto,
   NewOrderedProductDto,
-  OrderedProductDto,
-  OrderedProductWithProductDto,
   OrderMinimalInfoDto,
   OrderStatus,
   PaymentMethod,
-  ProductDto,
-  Quantity,
   SubmitBasket,
 } from '../../domain';
 import { BadRequestError } from '../../exceptions';
@@ -101,25 +97,19 @@ export class OrderService {
         `замовлення з id: ${getOrderDto.id} не знайдено`,
       );
     }
+    const orderStatus = this.checkOrderStatusType(savedOrder.orderStatus);
+    const orderedProductWithProductDto =
+      OrderDbToDtoMapper.ItemGetOrderToOrderedProductsWithProduct(savedOrder);
 
-    const orderedProducts: OrderedProductDto[] = savedOrder.OrderedProduct.map(
-      (orderedProduct) => {
-        return new OrderedProductDto({
-          count: orderedProduct.count,
-          price: orderedProduct.price,
-          productId: orderedProduct.productId,
-          name: orderedProduct.product.name,
-          orderId: orderedProduct.orderId,
-          quantity: orderedProduct.product.quantity as Quantity,
-        });
-      },
+    const totalPrice = this.sumAggregatorService.getTotalSumProducts(
+      orderedProductWithProductDto,
+      orderStatus,
     );
 
-    const totalPrice =
-      this.sumAggregatorService.totalSumProducts(orderedProducts);
-
-    const orderedProductsWithSum =
-      this.sumAggregatorService.sumOrderedProducts(orderedProducts);
+    const orderedProducts = this.sumAggregatorService.sumOrderedProducts(
+      orderedProductWithProductDto,
+      orderStatus,
+    );
 
     return new FullOrderInfoDto({
       id: savedOrder.id,
@@ -131,7 +121,7 @@ export class OrderService {
       address: savedOrder.ShippingDetails.address,
       contactNumber: savedOrder.ShippingDetails.number,
       recipient: `${savedOrder.ShippingDetails.firstName} ${savedOrder.ShippingDetails.lastName}`,
-      orderedProducts: orderedProductsWithSum,
+      orderedProducts,
     });
   }
 
