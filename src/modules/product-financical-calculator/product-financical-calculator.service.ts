@@ -5,68 +5,61 @@ import {
   OrderedProductWithSumDto,
   OrderStatus,
 } from '../../domain';
-import { CurrencyUtil } from '../../util';
 
 @Injectable()
 export class ProductFinancialCalculatorService {
-  totalSumProducts(products: CountAndPrice[]) {
-    const sum = products.reduce((acc, orderedProduct) => {
-      return acc + orderedProduct.price * orderedProduct.count;
+  calculateProductsCost(products: CountAndPrice[]) {
+    return products.reduce((acc, orderedProduct) => {
+      return acc + this.calculateProductCost(orderedProduct);
     }, 0);
-    return CurrencyUtil.round(sum);
-  }
-
-  sumProduct(product: CountAndPrice) {
-    return CurrencyUtil.round(product.price * product.count);
   }
 
   sumOrderedProducts(
     products: OrderedProductWithProductDto[],
     orderStatus: OrderStatus,
   ): OrderedProductWithSumDto[] {
-    if (orderStatus === OrderStatus.DELIVERED) {
-      return products.map((orderedProduct) => {
-        return new OrderedProductWithSumDto({
-          ...orderedProduct,
-          sum: this.sumProduct({
-            price: orderedProduct.price,
-            count: orderedProduct.count,
-          }),
-        });
-      });
-    } else {
-      return products.map((product) => {
-        return new OrderedProductWithSumDto({
-          ...product,
-          sum: this.sumProduct({
-            price: product.product.price,
-            count: product.count,
-          }),
-        });
-      });
-    }
+    return products.map((product) => {
+      const countAndPrice = this.gerOrderedProductPrice(product, orderStatus);
+      return this.createOrderedProductWithSum(countAndPrice, product);
+    });
   }
 
-  normalizeCount(count: number) {
-    return Math.round(count * 100) / 100;
+  createOrderedProductWithSum(
+    countAndPrice: CountAndPrice,
+    product: OrderedProductWithProductDto,
+  ): OrderedProductWithSumDto {
+    return new OrderedProductWithSumDto({
+      ...product,
+      sum: this.calculateProductCost(countAndPrice),
+    });
   }
 
-  getTotalSumProducts(
+  gerOrderedProductPrice(
+    product: OrderedProductWithProductDto,
+    orderStatus: OrderStatus,
+  ): CountAndPrice {
+    return this.isOrderDelivered(orderStatus)
+      ? { price: product.price, count: product.count }
+      : { price: product.product.price, count: product.count };
+  }
+
+  getSumOrderedProducts(
     orderedProducts: OrderedProductWithProductDto[],
     orderStatus: OrderStatus,
   ) {
-    let totalPrice: number;
-    if (orderStatus === OrderStatus.DELIVERED) {
-      totalPrice = this.totalSumProducts(orderedProducts);
-    } else {
-      const productsPriceAndCount = orderedProducts.map((orderedProduct) => {
-        return {
-          price: orderedProduct.product.price,
-          count: orderedProduct.count,
-        };
-      });
-      totalPrice = this.totalSumProducts(productsPriceAndCount);
-    }
-    return totalPrice;
+    const productsPriceAndCount = orderedProducts.map((orderedProduct) => {
+      return this.gerOrderedProductPrice(orderedProduct, orderStatus);
+    });
+    return this.calculateProductsCost(productsPriceAndCount);
+  }
+
+  calculateProductCost(product: CountAndPrice): number {
+    return this.normalizeCount(product.price * product.count);
+  }
+  normalizeCount(count: number) {
+    return Math.round(count * 100) / 100;
+  }
+  private isOrderDelivered(orderStatus: OrderStatus): boolean {
+    return orderStatus === OrderStatus.DELIVERED;
   }
 }

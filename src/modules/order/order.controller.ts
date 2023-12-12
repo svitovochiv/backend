@@ -45,7 +45,6 @@ export class OrderController {
 
   @Get('all')
   getAllOrders(@Executor() executor?: UserDto) {
-    console.log('executor: ', executor);
     return this.orderService.getAllOrders();
   }
 

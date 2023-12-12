@@ -1,5 +1,5 @@
-import {OrderedProductDto} from "./ordered-product.dto";
-import {ProductDto} from "../../product";
+import { OrderedProductDto } from './ordered-product.dto';
+import { ProductDto } from '../../product';
 
 export class OrderedProductWithProductDto extends OrderedProductDto {
   product: ProductDto;
@@ -7,5 +7,4 @@ export class OrderedProductWithProductDto extends OrderedProductDto {
     super(data);
     this.product = data.product;
   }
-
 }

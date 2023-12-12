@@ -109,7 +109,7 @@ export class BasketService {
         };
       },
     );
-    const sum = this.sumAggregatorService.totalSumProducts(
+    const sum = this.sumAggregatorService.calculateProductsCost(
       formattedProductsInBasket,
     );
 
@@ -127,7 +127,7 @@ export class BasketService {
       const quantity =
         this.quantityUtil.normalizeQuantity(productInBasket.product.quantity) ||
         Quantity.Kilogram;
-      const sum = this.sumAggregatorService.sumProduct({
+      const sum = this.sumAggregatorService.calculateProductCost({
         count: productInBasket.count.toNumber(),
         price: productInBasket.product.price,
       });

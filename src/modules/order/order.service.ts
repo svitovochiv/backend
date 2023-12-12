@@ -70,11 +70,10 @@ export class OrderService {
 
       const mappedOrderedProducts =
         OrderDbToDtoMapper.ItemGetOrderToOrderedProductsWithProduct(savedOrder);
-      const totalPrice = this.sumAggregatorService.getTotalSumProducts(
+      const totalPrice = this.sumAggregatorService.getSumOrderedProducts(
         mappedOrderedProducts,
         orderStatus,
       );
-
       return new OrderMinimalInfoDto({
         id: savedOrder.id,
         createdAt: savedOrder.createdAt,
@@ -101,7 +100,7 @@ export class OrderService {
     const orderedProductWithProductDto =
       OrderDbToDtoMapper.ItemGetOrderToOrderedProductsWithProduct(savedOrder);
 
-    const totalPrice = this.sumAggregatorService.getTotalSumProducts(
+    const totalPrice = this.sumAggregatorService.getSumOrderedProducts(
       orderedProductWithProductDto,
       orderStatus,
     );
