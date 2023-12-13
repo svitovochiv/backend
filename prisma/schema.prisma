@@ -46,7 +46,7 @@ model Basket {
 model BasketProduct {
   basketId  String
   productId String
-  count     Decimal
+  count     Float
   product   Product @relation(fields: [productId], references: [id])
   basket    Basket  @relation(fields: [basketId], references: [id])
 

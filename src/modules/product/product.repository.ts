@@ -37,8 +37,12 @@ export class ProductRepository {
     });
   }
 
-  getProducts() {
+  getProducts(params?: { isActive?: boolean }) {
     return this.product.findMany({
+      where: {
+        isActive: params?.isActive,
+        // ...(params?.isActive !== undefined && { isActive: params.isActive }),
+      },
       orderBy: {
         name: 'asc',
       },

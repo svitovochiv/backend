@@ -1,10 +1,7 @@
 import { PrismaService } from '../prisma';
 import { Injectable } from '@nestjs/common';
-import {
-  CreateBasketDto,
-  SubmitBasket,
-  UpdateBasketProductDto,
-} from '../../domain';
+import { CreateBasketDto, UpdateBasketProductDto } from '../../domain';
+import { GetBasketProductsDb } from './interface';
 
 @Injectable()
 export class BasketRepository {
@@ -64,24 +61,29 @@ export class BasketRepository {
     });
   }
 
-  getOrderedProductsUserId({ userId }: { userId: string }) {
+  getBasketProducts({
+    userId,
+    isActiveProduct,
+  }: {
+    userId: string;
+    isActiveProduct?: boolean;
+  }): Promise<GetBasketProductsDb[]> {
     return this.basketProduct.findMany({
       where: {
         basket: {
           userId,
+        },
+        product: {
+          ...(isActiveProduct !== undefined
+            ? { isActive: isActiveProduct }
+            : undefined),
         },
       },
       select: {
         basketId: true,
         count: true,
         productId: true,
-        product: {
-          select: {
-            name: true,
-            price: true,
-            quantity: true,
-          },
-        },
+        product: true,
       },
     });
   }
@@ -97,7 +99,7 @@ export class BasketRepository {
     });
   }
 
-  deleteBasketByUserId({ userId }: { userId: string }) {
+  deleteBasket({ userId }: { userId: string }) {
     return this.basketProduct.deleteMany({
       where: {
         basket: {

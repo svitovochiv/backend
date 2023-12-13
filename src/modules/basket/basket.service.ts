@@ -2,18 +2,21 @@ import { BasketRepository } from './basket.repository';
 import { Injectable } from '@nestjs/common';
 import {
   BasketMinimalProductInfoDto,
+  BasketProductWithProductDto,
+  BasketProductWithPriceDto,
   BasketSumDto,
-  CountAndPrice,
   CreateBasketDto,
   GetBasketByUserIdDto,
   ProductsInBasketDto,
   Quantity,
   UpdateBasketProductByUserIdDto,
   UpdateBasketProductDto,
+  ProductDto,
 } from '../../domain';
 import { DeleteProductInBasketDto } from '../../domain/order/dto/delete-product-in-basket.dto';
 import { QuantityUtil } from '../../util';
 import { ProductFinancialCalculatorService } from '../product-financical-calculator';
+import { ProductDbToDtoMapper } from '../../util/mapper';
 
 @Injectable()
 export class BasketService {
@@ -66,7 +69,7 @@ export class BasketService {
       return new BasketMinimalProductInfoDto({
         basketId: savedBasketProduct.basketId,
         productId: savedBasketProduct.productId,
-        count: savedBasketProduct.count.toNumber(),
+        count: savedBasketProduct.count,
       });
     }
   }
@@ -91,24 +94,47 @@ export class BasketService {
         new BasketMinimalProductInfoDto({
           basketId: product.basketId,
           productId: product.productId,
-          count: product.count.toNumber(),
+          count: product.count,
         }),
     );
   }
-
+  private formatActiveProducts(
+    basketProducts: BasketProductWithProductDto[],
+  ): BasketProductWithPriceDto[] {
+    return basketProducts
+      .filter((basketProduct) => basketProduct.product.isActive)
+      .map(
+        (basketProduct) =>
+          new BasketProductWithPriceDto({
+            ...basketProduct,
+            price: basketProduct.product.price,
+          }),
+      );
+  }
   async getOrderedProductsSum(data: GetBasketByUserIdDto) {
-    const productsInBasket =
-      await this.basketRepository.getOrderedProductsUserId({
+    const savedBasketProductsWithProduct =
+      await this.basketRepository.getBasketProducts({
         userId: data.userId,
       });
-    const formattedProductsInBasket: CountAndPrice[] = productsInBasket.map(
-      (product) => {
-        return {
-          count: product.count.toNumber(),
-          price: product.product.price,
-        };
-      },
+
+    const basketProductsWithProduct = savedBasketProductsWithProduct.map(
+      (savedBasketProductWithProduct) =>
+        new BasketProductWithProductDto({
+          basketId: savedBasketProductWithProduct.basketId,
+          productId: savedBasketProductWithProduct.productId,
+          count: savedBasketProductWithProduct.count,
+          product: new ProductDto(
+            ProductDbToDtoMapper.productDbToDto(
+              savedBasketProductWithProduct.product,
+            ),
+          ),
+        }),
     );
+
+    const formattedProductsInBasket = this.formatActiveProducts(
+      basketProductsWithProduct,
+    );
+
     const sum = this.sumAggregatorService.calculateProductsCost(
       formattedProductsInBasket,
     );
@@ -119,22 +145,23 @@ export class BasketService {
   }
 
   async getProductsInBasket(data: GetBasketByUserIdDto) {
-    const savedProductsInBasket =
-      await this.basketRepository.getOrderedProductsUserId({
+    const savedProductsInBasket = await this.basketRepository.getBasketProducts(
+      {
         userId: data.userId,
-      });
+      },
+    );
     return savedProductsInBasket.map((productInBasket) => {
       const quantity =
         this.quantityUtil.normalizeQuantity(productInBasket.product.quantity) ||
         Quantity.Kilogram;
       const sum = this.sumAggregatorService.calculateProductCost({
-        count: productInBasket.count.toNumber(),
+        count: productInBasket.count,
         price: productInBasket.product.price,
       });
       return new ProductsInBasketDto({
         name: productInBasket.product.name,
         productId: productInBasket.productId,
-        count: productInBasket.count.toNumber(),
+        count: productInBasket.count,
         price: productInBasket.product.price,
         sum,
         quantity,
@@ -143,6 +170,6 @@ export class BasketService {
   }
 
   deleteBasketByUserId(data: { userId: string }) {
-    return this.basketRepository.deleteBasketByUserId(data);
+    return this.basketRepository.deleteBasket(data);
   }
 }
