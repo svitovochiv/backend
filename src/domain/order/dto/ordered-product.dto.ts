@@ -1,7 +1,7 @@
 import { CountAndPrice } from '../../sum-aggregator';
 import { Quantity } from '../../product';
 
-export class OrderedProduct implements CountAndPrice {
+export class OrderedProductDto implements CountAndPrice {
   name: string;
   productId: string;
   orderId: string;
@@ -9,7 +9,7 @@ export class OrderedProduct implements CountAndPrice {
   count: number;
   price: number;
 
-  constructor(data: OrderedProduct) {
+  constructor(data: OrderedProductDto) {
     this.productId = data.productId;
     this.name = data.name;
     this.orderId = data.orderId;

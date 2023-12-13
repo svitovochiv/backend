@@ -104,6 +104,12 @@ export class ProductService {
       endAdditionalInformationRowIndex > 0
         ? endAdditionalInformationRowIndex + 1
         : undefined;
+    console.log(parsedProductsRaw)
+    if(!startProductsInformationIndex){
+      throw new BadRequestError(
+          'Не знайдено початок таблиці. Початком таблиці є рядок з клітинкою "Ном"',
+      );
+    }
     if (startProductsInformationIndex) {
       parsedProductsRaw.splice(0, startProductsInformationIndex);
       const endProductsInformationIndex = parsedProductsRaw.findIndex(
@@ -125,9 +131,7 @@ export class ProductService {
       });
       return parsedProducts;
     }
-    throw new BadRequestError(
-      'Не знайдено початок таблиці. Початком таблиці є рядок з клітинкою Товар',
-    );
+
   }
 
   private checkDuplicateProducts(parsedProducts: ParsedProductDto[]) {

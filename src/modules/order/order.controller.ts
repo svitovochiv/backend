@@ -1,14 +1,22 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard, CSession, Session } from '../auth';
 import {
   GetOrderDto,
   ReqSubmitBasket,
+  ReqUpdateOrder,
   ShippingDetails,
   SubmitBasket,
-  UserDto,
+  UpdateOrderDto,
 } from '../../domain';
 import { OrderService } from './order.service';
-import { Executor } from '../user';
 
 @Controller('order')
 export class OrderController {
@@ -21,7 +29,7 @@ export class OrderController {
     @Body() submitBasket: ReqSubmitBasket,
   ) {
     const userId = session.getAccessTokenPayload().appUserId;
-    return this.orderService.submitOrder(
+    return this.orderService.submitBasket(
       new SubmitBasket({
         userId,
         shippingDetails: new ShippingDetails({
@@ -40,12 +48,11 @@ export class OrderController {
   @UseGuards(new AuthGuard())
   getUserOrders(@Session() session: CSession) {
     const userId = session.getAccessTokenPayload().appUserId;
-    return this.orderService.getOrdersByUserId({ userId });
+    return this.orderService.getAllOrders({ userId });
   }
 
   @Get('all')
-  getAllOrders(@Executor() executor?: UserDto) {
-    console.log('executor: ', executor);
+  getAllOrders() {
     return this.orderService.getAllOrders();
   }
 
@@ -53,5 +60,11 @@ export class OrderController {
   @UseGuards(new AuthGuard())
   getOrderById(@Session() session: CSession, @Param('id') id: string) {
     return this.orderService.getOrderById(new GetOrderDto({ id }));
+  }
+
+  @Put('/update')
+  @UseGuards(new AuthGuard())
+  updateOrder(@Body() updateOrder: ReqUpdateOrder) {
+    return this.orderService.updateOrder(new UpdateOrderDto(updateOrder));
   }
 }

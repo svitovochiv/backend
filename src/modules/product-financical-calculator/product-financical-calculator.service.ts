@@ -1,34 +1,69 @@
 import { Injectable } from '@nestjs/common';
 import {
   CountAndPrice,
-  OrderedProduct,
+  OrderedProductWithProductDto,
   OrderedProductWithSumDto,
+  OrderStatus,
 } from '../../domain';
-import { CurrencyUtil } from '../../util';
 
 @Injectable()
 export class ProductFinancialCalculatorService {
-  totalSumProducts(products: CountAndPrice[]) {
-    const sum = products.reduce((acc, orderedProduct) => {
-      return acc + orderedProduct.price * orderedProduct.count;
+  calculateProductsCost(products: CountAndPrice[]) {
+    return products.reduce((acc, orderedProduct) => {
+      return acc + this.calculateProductCost(orderedProduct);
     }, 0);
-    return CurrencyUtil.round(sum);
   }
 
-  sumProduct(product: CountAndPrice) {
-    return CurrencyUtil.round(product.price * product.count);
-  }
-
-  sumOrderedProducts(products: OrderedProduct[]): OrderedProductWithSumDto[] {
+  sumOrderedProducts(
+    products: OrderedProductWithProductDto[],
+    orderStatus: OrderStatus,
+  ): OrderedProductWithSumDto[] {
     return products.map((product) => {
-      return new OrderedProductWithSumDto({
-        ...product,
-        sum: this.sumProduct(product),
-      });
+      const countAndPrice = this.gerOrderedProductPrice(product, orderStatus);
+      return this.createOrderedProductWithSum(countAndPrice, product);
     });
+  }
+
+  createOrderedProductWithSum(
+    countAndPrice: CountAndPrice,
+    product: OrderedProductWithProductDto,
+  ): OrderedProductWithSumDto {
+    return new OrderedProductWithSumDto({
+      ...product,
+      sum: this.calculateProductCost(countAndPrice),
+    });
+  }
+
+  gerOrderedProductPrice(
+    product: OrderedProductWithProductDto,
+    orderStatus: OrderStatus,
+  ): CountAndPrice {
+    return this.isOrderDelivered(orderStatus)
+      ? { price: product.price, count: product.count }
+      : { price: product.product.price, count: product.count };
+  }
+
+  getSumOrderedProducts(
+    orderedProducts: OrderedProductWithProductDto[],
+    orderStatus: OrderStatus,
+  ) {
+    const productsPriceAndCount = orderedProducts.map((orderedProduct) => {
+      return this.gerOrderedProductPrice(orderedProduct, orderStatus);
+    });
+    return this.calculateProductsCost(productsPriceAndCount);
+  }
+
+  calculateProductCost(product: CountAndPrice): number {
+    return this.normalizeSum(product.price * product.count);
+  }
+  normalizeSum(count: number) {
+    return Math.round(count * 100) / 100;
   }
 
   normalizeCount(count: number) {
     return Math.round(count * 100) / 100;
+  }
+  private isOrderDelivered(orderStatus: OrderStatus): boolean {
+    return orderStatus === OrderStatus.DELIVERED;
   }
 }
