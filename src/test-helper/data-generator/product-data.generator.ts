@@ -2,12 +2,12 @@ import { Product } from '@prisma/client';
 import { Quantity } from '../../domain';
 import { faker } from '@faker-js/faker';
 export class ProductDataGenerator {
-  static product(): Product {
+  static product(): Omit<Product, 'quantity'> & { quantity: Quantity } {
     return {
       id: faker.string.uuid(),
       name: faker.commerce.productName(),
       price: Number(faker.commerce.price({ dec: 2, max: 300 })),
-      quantity: Quantity.Kilogram,
+      quantity: faker.helpers.enumValue(Quantity),
       isActive: faker.datatype.boolean(),
       createdAt: faker.date.between({
         from: '2021-01-01',
