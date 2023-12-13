@@ -2,18 +2,21 @@ import { BasketRepository } from './basket.repository';
 import { Injectable } from '@nestjs/common';
 import {
   BasketMinimalProductInfoDto,
+  BasketProductWithProductDto,
+  BasketProductWithPriceDto,
   BasketSumDto,
-  CountAndPrice,
   CreateBasketDto,
   GetBasketByUserIdDto,
   ProductsInBasketDto,
   Quantity,
   UpdateBasketProductByUserIdDto,
   UpdateBasketProductDto,
+  ProductDto,
 } from '../../domain';
 import { DeleteProductInBasketDto } from '../../domain/order/dto/delete-product-in-basket.dto';
 import { QuantityUtil } from '../../util';
 import { ProductFinancialCalculatorService } from '../product-financical-calculator';
+import { ProductDbToDtoMapper } from '../../util/mapper';
 
 @Injectable()
 export class BasketService {
@@ -95,19 +98,43 @@ export class BasketService {
         }),
     );
   }
-
+  private formatActiveProducts(
+    basketProducts: BasketProductWithProductDto[],
+  ): BasketProductWithPriceDto[] {
+    return basketProducts
+      .filter((basketProduct) => basketProduct.product.isActive)
+      .map(
+        (basketProduct) =>
+          new BasketProductWithPriceDto({
+            ...basketProduct,
+            price: basketProduct.product.price,
+          }),
+      );
+  }
   async getOrderedProductsSum(data: GetBasketByUserIdDto) {
-    const productsInBasket = await this.basketRepository.getBasketProducts({
-      userId: data.userId,
-    });
-    const formattedProductsInBasket: CountAndPrice[] = productsInBasket.map(
-      (product) => {
-        return {
-          count: product.count,
-          price: product.product.price,
-        };
-      },
+    const savedBasketProductsWithProduct =
+      await this.basketRepository.getBasketProducts({
+        userId: data.userId,
+      });
+
+    const basketProductsWithProduct = savedBasketProductsWithProduct.map(
+      (savedBasketProductWithProduct) =>
+        new BasketProductWithProductDto({
+          basketId: savedBasketProductWithProduct.basketId,
+          productId: savedBasketProductWithProduct.productId,
+          count: savedBasketProductWithProduct.count,
+          product: new ProductDto(
+            ProductDbToDtoMapper.productDbToDto(
+              savedBasketProductWithProduct.product,
+            ),
+          ),
+        }),
     );
+
+    const formattedProductsInBasket = this.formatActiveProducts(
+      basketProductsWithProduct,
+    );
+
     const sum = this.sumAggregatorService.calculateProductsCost(
       formattedProductsInBasket,
     );

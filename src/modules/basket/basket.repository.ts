@@ -63,27 +63,27 @@ export class BasketRepository {
 
   getBasketProducts({
     userId,
+    isActiveProduct,
   }: {
     userId: string;
+    isActiveProduct?: boolean;
   }): Promise<GetBasketProductsDb[]> {
     return this.basketProduct.findMany({
       where: {
         basket: {
           userId,
         },
+        product: {
+          ...(isActiveProduct !== undefined
+            ? { isActive: isActiveProduct }
+            : undefined),
+        },
       },
       select: {
         basketId: true,
         count: true,
         productId: true,
-        product: {
-          select: {
-            id: true,
-            name: true,
-            price: true,
-            quantity: true,
-          },
-        },
+        product: true,
       },
     });
   }

@@ -57,12 +57,14 @@ describe('BasketService', () => {
     it('should return basket products with product', async () => {
       // prepare data for assertion
       const formattedProductsInBasketPack1: CountAndPrice[] =
-        pack1.basketProductsWithProduct.map((product) => {
-          return {
-            count: product.count,
-            price: product.product.price,
-          };
-        });
+        pack1.basketProductsWithProduct
+          .filter((basketProduct) => basketProduct.product.isActive)
+          .map((product) => {
+            return {
+              count: product.count,
+              price: product.product.price,
+            };
+          });
 
       const expectedBasketSumDtoPack1 =
         financialCalculatorService.calculateProductsCost(
