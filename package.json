@@ -25,6 +25,7 @@
     "migrate:reset": "npx prisma migrate reset",
     "migrate:resolve": "npx prisma migrate resolve",
     "prisma:generate": "npx prisma generate",
+    "prisma:push": "npx prisma db push",
     "prisma:studio": "npx prisma studio"
   },
   "dependencies": {

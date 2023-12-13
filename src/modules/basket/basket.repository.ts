@@ -1,10 +1,7 @@
 import { PrismaService } from '../prisma';
 import { Injectable } from '@nestjs/common';
-import {
-  CreateBasketDto,
-  SubmitBasket,
-  UpdateBasketProductDto,
-} from '../../domain';
+import { CreateBasketDto, UpdateBasketProductDto } from '../../domain';
+import { GetBasketProductsDb } from './interface';
 
 @Injectable()
 export class BasketRepository {
@@ -64,7 +61,11 @@ export class BasketRepository {
     });
   }
 
-  getOrderedProductsUserId({ userId }: { userId: string }) {
+  getBasketProducts({
+    userId,
+  }: {
+    userId: string;
+  }): Promise<GetBasketProductsDb[]> {
     return this.basketProduct.findMany({
       where: {
         basket: {
@@ -77,6 +78,7 @@ export class BasketRepository {
         productId: true,
         product: {
           select: {
+            id: true,
             name: true,
             price: true,
             quantity: true,
@@ -97,7 +99,7 @@ export class BasketRepository {
     });
   }
 
-  deleteBasketByUserId({ userId }: { userId: string }) {
+  deleteBasket({ userId }: { userId: string }) {
     return this.basketProduct.deleteMany({
       where: {
         basket: {

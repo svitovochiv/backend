@@ -66,7 +66,7 @@ export class BasketService {
       return new BasketMinimalProductInfoDto({
         basketId: savedBasketProduct.basketId,
         productId: savedBasketProduct.productId,
-        count: savedBasketProduct.count.toNumber(),
+        count: savedBasketProduct.count,
       });
     }
   }
@@ -91,20 +91,19 @@ export class BasketService {
         new BasketMinimalProductInfoDto({
           basketId: product.basketId,
           productId: product.productId,
-          count: product.count.toNumber(),
+          count: product.count,
         }),
     );
   }
 
   async getOrderedProductsSum(data: GetBasketByUserIdDto) {
-    const productsInBasket =
-      await this.basketRepository.getOrderedProductsUserId({
-        userId: data.userId,
-      });
+    const productsInBasket = await this.basketRepository.getBasketProducts({
+      userId: data.userId,
+    });
     const formattedProductsInBasket: CountAndPrice[] = productsInBasket.map(
       (product) => {
         return {
-          count: product.count.toNumber(),
+          count: product.count,
           price: product.product.price,
         };
       },
@@ -119,22 +118,23 @@ export class BasketService {
   }
 
   async getProductsInBasket(data: GetBasketByUserIdDto) {
-    const savedProductsInBasket =
-      await this.basketRepository.getOrderedProductsUserId({
+    const savedProductsInBasket = await this.basketRepository.getBasketProducts(
+      {
         userId: data.userId,
-      });
+      },
+    );
     return savedProductsInBasket.map((productInBasket) => {
       const quantity =
         this.quantityUtil.normalizeQuantity(productInBasket.product.quantity) ||
         Quantity.Kilogram;
       const sum = this.sumAggregatorService.calculateProductCost({
-        count: productInBasket.count.toNumber(),
+        count: productInBasket.count,
         price: productInBasket.product.price,
       });
       return new ProductsInBasketDto({
         name: productInBasket.product.name,
         productId: productInBasket.productId,
-        count: productInBasket.count.toNumber(),
+        count: productInBasket.count,
         price: productInBasket.product.price,
         sum,
         quantity,
@@ -143,6 +143,6 @@ export class BasketService {
   }
 
   deleteBasketByUserId(data: { userId: string }) {
-    return this.basketRepository.deleteBasketByUserId(data);
+    return this.basketRepository.deleteBasket(data);
   }
 }
