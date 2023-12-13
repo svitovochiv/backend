@@ -12,6 +12,7 @@ import {
   OrderStatus,
   PaymentMethod,
   SubmitBasket,
+  UpdateOrderDto,
 } from '../../domain';
 import { BadRequestError } from '../../exceptions';
 import { ProductFinancialCalculatorService } from '../product-financical-calculator';
@@ -132,5 +133,9 @@ export class OrderService {
       );
     }
     return orderStatus as OrderStatus;
+  }
+
+  updateOrder(updateOrderDto: UpdateOrderDto) {
+    return this.orderRepository.updateOrder(updateOrderDto);
   }
 }

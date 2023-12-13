@@ -5,6 +5,7 @@ import {
   CreateOrder,
   GetOrderDto,
   ShippingDetails,
+  UpdateOrderDto,
 } from '../../domain';
 
 import { Prisma } from '@prisma/client';
@@ -106,6 +107,17 @@ export class OrderRepository {
           },
         },
         user: true,
+      },
+    });
+  }
+
+  updateOrder(updateOrder: UpdateOrderDto) {
+    return this.order.update({
+      where: {
+        id: updateOrder.orderId,
+      },
+      data: {
+        orderStatus: updateOrder.orderStatus,
       },
     });
   }
