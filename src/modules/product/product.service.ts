@@ -77,21 +77,23 @@ export class ProductService {
 
   async getProducts() {
     const existedProducts: ProductDto[] = [];
-    (await this.productRepository.getProducts()).forEach((product) => {
-      const normalizedQuantity = this.quantityUtil.normalizeQuantity(
-        product.quantity,
-      );
-      if (normalizedQuantity) {
-        const existedProduct = new ProductDto({
-          id: product.id,
-          name: product.name,
-          quantity: normalizedQuantity,
-          price: product.price,
-          isActive: product.isActive,
-        });
-        existedProducts.push(existedProduct);
-      }
-    });
+    (await this.productRepository.getProducts({ isActive: true })).forEach(
+      (product) => {
+        const normalizedQuantity = this.quantityUtil.normalizeQuantity(
+          product.quantity,
+        );
+        if (normalizedQuantity) {
+          const existedProduct = new ProductDto({
+            id: product.id,
+            name: product.name,
+            quantity: normalizedQuantity,
+            price: product.price,
+            isActive: product.isActive,
+          });
+          existedProducts.push(existedProduct);
+        }
+      },
+    );
     return existedProducts;
   }
 
@@ -104,10 +106,10 @@ export class ProductService {
       endAdditionalInformationRowIndex > 0
         ? endAdditionalInformationRowIndex + 1
         : undefined;
-    console.log(parsedProductsRaw)
-    if(!startProductsInformationIndex){
+    console.log(parsedProductsRaw);
+    if (!startProductsInformationIndex) {
       throw new BadRequestError(
-          'Не знайдено початок таблиці. Початком таблиці є рядок з клітинкою "Ном"',
+        'Не знайдено початок таблиці. Початком таблиці є рядок з клітинкою "Ном"',
       );
     }
     if (startProductsInformationIndex) {
@@ -131,7 +133,6 @@ export class ProductService {
       });
       return parsedProducts;
     }
-
   }
 
   private checkDuplicateProducts(parsedProducts: ParsedProductDto[]) {
