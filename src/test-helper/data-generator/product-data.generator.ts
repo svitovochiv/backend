@@ -16,4 +16,9 @@ export class ProductDataGenerator {
       updatedAt: new Date(),
     };
   }
+
+  static products(params?: { count?: number }): Product[] {
+    const count = params?.count || faker.number.int({ min: 0, max: 10 });
+    return Array.from({ length: count }).map(() => this.product());
+  }
 }

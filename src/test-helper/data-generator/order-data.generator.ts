@@ -35,6 +35,11 @@ export class OrderDataGenerator {
     };
   }
 
+  static orderedProducts(params?: { count?: number }): OrderedProduct[] {
+    const count = params?.count || faker.number.int({ min: 0, max: 10 });
+    return Array.from({ length: count }).map(() => this.orderedProduct());
+  }
+
   static orderedProductWithProduct(): OrderedProductWithProductDb {
     return {
       ...this.orderedProduct(),

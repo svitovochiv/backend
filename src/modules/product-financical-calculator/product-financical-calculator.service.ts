@@ -54,8 +54,12 @@ export class ProductFinancialCalculatorService {
   }
 
   calculateProductCost(product: CountAndPrice): number {
-    return this.normalizeCount(product.price * product.count);
+    return this.normalizeSum(product.price * product.count);
   }
+  normalizeSum(count: number) {
+    return Math.round(count * 100) / 100;
+  }
+
   normalizeCount(count: number) {
     return Math.round(count * 100) / 100;
   }
