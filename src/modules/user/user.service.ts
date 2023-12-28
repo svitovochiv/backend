@@ -7,7 +7,6 @@ import {
   UserDto,
 } from '../../domain';
 import { MockUsers } from '../../mock/mock-users';
-import { BadRequestError } from '../../exceptions';
 
 @Injectable()
 export class UserService {

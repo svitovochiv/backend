@@ -4,7 +4,7 @@ import EmailPassword from 'supertokens-node/recipe/thirdpartyemailpassword';
 import { CreateUserDto, SignupUserDto } from '../../domain';
 
 import EmailVerification from 'supertokens-node/recipe/emailverification';
-import supertokens, { deleteUser } from 'supertokens-node';
+import supertokens from 'supertokens-node';
 import RecipeUserId from 'supertokens-node/lib/build/recipeUserId';
 
 async function manuallyVerifyEmail(recipeUserId: supertokens.RecipeUserId) {

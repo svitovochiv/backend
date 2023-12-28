@@ -1,5 +1,5 @@
 import { Basket, BasketProduct } from '@prisma/client';
-import { da, faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import { GetBasketProductsDb } from '../../modules/basket/interface';
 import { ProductDataGenerator } from './product-data.generator';
 import { Quantities, quantityPrecisionMap } from '../../domain';
