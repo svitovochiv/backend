@@ -1,6 +1,6 @@
 import { ModuleMetadata } from '@nestjs/common';
-import { AuthModuleConfig } from './config.interface';
 import { SessionContainer } from 'supertokens-node/recipe/session';
+import { AuthModuleConfig } from './config.interface';
 
 export interface IUserRegisterField {
   email: string;

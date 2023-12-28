@@ -1,5 +1,5 @@
-import { OrderedProductDto } from './ordered-product.dto';
 import { ProductDto } from '../../product';
+import { OrderedProductDto } from './ordered-product.dto';
 
 export class OrderedProductWithProductDto extends OrderedProductDto {
   product: ProductDto;

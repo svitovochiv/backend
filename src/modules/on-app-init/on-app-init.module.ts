@@ -1,5 +1,5 @@
-import { UserModule } from '../user';
 import { Module } from '@nestjs/common';
+import { UserModule } from '../user';
 import { MockUsers } from '../../mock/mock-users';
 import { OnAppInitService } from './on-app-init.service';
 import { OnAppInitController } from './on-app-init.controller';

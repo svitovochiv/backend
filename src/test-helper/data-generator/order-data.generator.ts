@@ -1,8 +1,8 @@
 import { Order, OrderedProduct, ShippingDetails } from '@prisma/client';
-import { GetOrderResDb, OrderedProductWithProductDb } from '../../modules';
-import { ProductDataGenerator } from './product-data.generator';
-import { OrderStatus, PaymentMethod } from '../../domain';
 import { faker } from '@faker-js/faker';
+import { GetOrderResDb, OrderedProductWithProductDb } from '../../modules';
+import { OrderStatus, PaymentMethod } from '../../domain';
+import { ProductDataGenerator } from './product-data.generator';
 
 export class OrderDataGenerator {
   static shippingDetails(): ShippingDetails {

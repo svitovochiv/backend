@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma';
 import {
   AddOrderedProducts,
@@ -8,7 +9,6 @@ import {
   UpdateOrderDto,
 } from '../../domain';
 
-import { Prisma } from '@prisma/client';
 import { GetOrderResDb } from './interface';
 
 @Injectable()

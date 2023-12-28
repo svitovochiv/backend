@@ -1,4 +1,3 @@
-import { BasketRepository } from './basket.repository';
 import { Injectable } from '@nestjs/common';
 import {
   BasketMinimalProductInfoDto,
@@ -17,10 +16,11 @@ import { DeleteProductInBasketDto } from '../../domain/order/dto/delete-product-
 import { QuantityUtil } from '../../util';
 import { ProductFinancialCalculatorService } from '../product-financical-calculator';
 import { ProductDbToDtoMapper } from '../../util/mapper';
+import { BasketRepository } from './basket.repository';
 
 @Injectable()
 export class BasketService {
-  private readonly quantityUtil = new QuantityUtil();
+  private quantityUtil = new QuantityUtil();
   constructor(
     private readonly basketRepository: BasketRepository,
     private readonly sumAggregatorService: ProductFinancialCalculatorService,
@@ -39,7 +39,6 @@ export class BasketService {
   }
 
   async updateProduct(updateBasketProductDto: UpdateBasketProductByUserIdDto) {
-    console.log('updateBasketProductDto: ', updateBasketProductDto);
     if (!updateBasketProductDto.count) {
       return await this.deleteProduct(
         new DeleteProductInBasketDto({

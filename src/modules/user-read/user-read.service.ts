@@ -1,6 +1,6 @@
-import { UserReadRepository } from './user-read.repository';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Role, UserDto } from '../../domain';
+import { UserReadRepository } from './user-read.repository';
 
 @Injectable()
 export class UserReadService {

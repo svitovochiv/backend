@@ -5,11 +5,11 @@ import {
   DynamicModule,
 } from '@nestjs/common';
 
+import { UserModule } from '../user';
 import { AuthMiddleware } from './auth.middleware';
 import { ConfigInjectionToken, AuthModuleConfig } from './config.interface';
 import { SupertokensService } from './supertokens/supertokens.service';
 import { AuthController } from './auth.controller';
-import { UserModule } from '../user';
 import { IAuthAsyncConfig } from './interface';
 
 @Module({})

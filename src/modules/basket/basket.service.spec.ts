@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BasketService } from './basket.service';
-import { BasketRepository } from './basket.repository';
 import { PrismaModule } from '../prisma';
 import { ProductFinancialCalculatorService } from '../product-financical-calculator';
 import { BasketDataGenerator } from '../../test-helper';
 import { CountAndPrice } from '../../domain';
+import { BasketRepository } from './basket.repository';
+import { BasketService } from './basket.service';
 
 describe('BasketService', () => {
   let basketService: BasketService;

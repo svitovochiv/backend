@@ -1,5 +1,5 @@
-import { BasketProductDto } from './basket-product.dto';
 import { CountAndPrice } from '../sum-aggregator';
+import { BasketProductDto } from './basket-product.dto';
 
 export class BasketProductWithPriceDto
   extends BasketProductDto

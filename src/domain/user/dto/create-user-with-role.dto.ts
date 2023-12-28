@@ -1,5 +1,5 @@
-import { CreateUserDto } from './create-user.dto';
 import { Role } from '../role';
+import { CreateUserDto } from './create-user.dto';
 
 type CreatUserWithRoleDtoType = {
   createUserDto: CreateUserDto;

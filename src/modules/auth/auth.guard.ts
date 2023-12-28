@@ -2,11 +2,11 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Error as STError } from 'supertokens-node';
 
 import { verifySession } from 'supertokens-node/recipe/session/framework/express';
-import { CSession } from './interface';
-import { UserReadService } from '../user-read';
-import { IS_PUBLIC_KEY } from './is-public.decorator';
 import { Reflector } from '@nestjs/core';
+import { UserReadService } from '../user-read';
 import { BadRequestError } from '../../exceptions';
+import { CSession } from './interface';
+import { IS_PUBLIC_KEY } from './is-public.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

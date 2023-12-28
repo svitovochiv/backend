@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { OrderRepository } from './order.repository';
 import { BasketService } from '../basket';
 import {
   AddOrderedProducts,
@@ -17,6 +16,7 @@ import {
 import { BadRequestError } from '../../exceptions';
 import { ProductFinancialCalculatorService } from '../product-financical-calculator';
 import { OrderDbToDtoMapper } from '../../util/mapper';
+import { OrderRepository } from './order.repository';
 
 @Injectable()
 export class OrderService {

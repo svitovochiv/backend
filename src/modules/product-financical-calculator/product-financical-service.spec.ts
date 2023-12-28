@@ -1,11 +1,11 @@
-import { ProductFinancialCalculatorService } from './product-financical-calculator.service';
+import { Test } from '@nestjs/testing';
 import { CountAndPrice, OrderStatus } from '../../domain';
 import {
   OrderDataGenerator,
   ProductFinancialGenerator,
 } from '../../test-helper';
-import { Test } from '@nestjs/testing';
 import { OrderDbToDtoMapper } from '../../util/mapper';
+import { ProductFinancialCalculatorService } from './product-financical-calculator.service';
 
 describe('ProductFinancialCalculatorService', () => {
   let financialCalculatorService: ProductFinancialCalculatorService;

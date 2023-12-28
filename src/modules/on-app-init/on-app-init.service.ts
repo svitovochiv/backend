@@ -1,11 +1,11 @@
-import { UserService } from '../user';
 import { Injectable } from '@nestjs/common';
 import EmailPassword from 'supertokens-node/recipe/thirdpartyemailpassword';
-import { CreateUserDto, SignupUserDto } from '../../domain';
 
 import EmailVerification from 'supertokens-node/recipe/emailverification';
 import supertokens from 'supertokens-node';
 import RecipeUserId from 'supertokens-node/lib/build/recipeUserId';
+import { CreateUserDto, SignupUserDto } from '../../domain';
+import { UserService } from '../user';
 
 async function manuallyVerifyEmail(recipeUserId: supertokens.RecipeUserId) {
   try {

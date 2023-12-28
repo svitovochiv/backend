@@ -1,6 +1,6 @@
+import { ParsedProductDto } from '../domain';
 import { CustomError } from './custom.error';
 import { IError } from './interface';
-import { ParsedProductDto } from '../domain';
 
 export class SeveralProductsWithTheSameNameError extends CustomError {
   constructor(

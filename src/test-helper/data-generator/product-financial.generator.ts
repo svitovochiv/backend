@@ -1,5 +1,5 @@
-import { CountAndPrice } from '../../domain';
 import { faker } from '@faker-js/faker';
+import { CountAndPrice } from '../../domain';
 
 export class ProductFinancialGenerator {
   static priceAndCount(): CountAndPrice {

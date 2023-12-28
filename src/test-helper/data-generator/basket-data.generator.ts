@@ -1,8 +1,8 @@
 import { Basket, BasketProduct } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 import { GetBasketProductsDb } from '../../modules/basket/interface';
-import { ProductDataGenerator } from './product-data.generator';
 import { Quantities, quantityPrecisionMap } from '../../domain';
+import { ProductDataGenerator } from './product-data.generator';
 import { UserDataGenerator } from './user-data.generator';
 
 export class BasketDataGenerator {

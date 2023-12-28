@@ -1,7 +1,7 @@
 import { Controller, Get, Inject, UseGuards } from '@nestjs/common';
-import { UserService } from './user.service';
 import { AuthGuard, CSession, Session } from '../auth';
 import { BadRequestError } from '../../exceptions';
+import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
