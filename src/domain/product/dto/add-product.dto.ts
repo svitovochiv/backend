@@ -1,4 +1,4 @@
-import { Quantity } from '../quantity';
+import { Quantity } from '../../quantity';
 
 export class AddProductDto {
   name: string;

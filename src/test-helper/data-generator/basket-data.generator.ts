@@ -2,7 +2,7 @@ import { Basket, BasketProduct } from '@prisma/client';
 import { da, faker } from '@faker-js/faker';
 import { GetBasketProductsDb } from '../../modules/basket/interface';
 import { ProductDataGenerator } from './product-data.generator';
-import { Quantity, quantityPrecisionMap } from '../../domain';
+import { Quantities, quantityPrecisionMap } from '../../domain';
 import { UserDataGenerator } from './user-data.generator';
 
 export class BasketDataGenerator {
@@ -38,7 +38,7 @@ export class BasketDataGenerator {
     };
   }
 
-  static generateProductCount(quantity: Quantity) {
+  static generateProductCount(quantity: Quantities) {
     return faker.number.float({
       min: 1,
       max: 10,

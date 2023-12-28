@@ -1,8 +1,8 @@
-import { Quantity } from './quantity';
+import { Quantities } from './quantities';
 
-export const quantityPrecisionMap: { [key in Quantity]: number } = {
-  [Quantity.Kilogram]: 0.01,
-  [Quantity.Liter]: 1,
-  [Quantity.Package]: 1,
-  [Quantity.Piece]: 1,
+export const quantityPrecisionMap: { [key in Quantities]: number } = {
+  [Quantities.Kilogram]: 0.01,
+  [Quantities.Liter]: 1,
+  [Quantities.Package]: 1,
+  [Quantities.Piece]: 1,
 };

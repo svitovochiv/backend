@@ -8,10 +8,10 @@ import {
   CreateBasketDto,
   GetBasketByUserIdDto,
   ProductsInBasketDto,
-  Quantity,
   UpdateBasketProductByUserIdDto,
   UpdateBasketProductDto,
   ProductDto,
+  Quantity,
 } from '../../domain';
 import { DeleteProductInBasketDto } from '../../domain/order/dto/delete-product-in-basket.dto';
 import { QuantityUtil } from '../../util';
@@ -39,6 +39,7 @@ export class BasketService {
   }
 
   async updateProduct(updateBasketProductDto: UpdateBasketProductByUserIdDto) {
+    console.log('updateBasketProductDto: ', updateBasketProductDto);
     if (!updateBasketProductDto.count) {
       return await this.deleteProduct(
         new DeleteProductInBasketDto({
@@ -151,9 +152,6 @@ export class BasketService {
       },
     );
     return savedProductsInBasket.map((productInBasket) => {
-      const quantity =
-        this.quantityUtil.normalizeQuantity(productInBasket.product.quantity) ||
-        Quantity.Kilogram;
       const sum = this.sumAggregatorService.calculateProductCost({
         count: productInBasket.count,
         price: productInBasket.product.price,
@@ -164,7 +162,8 @@ export class BasketService {
         count: productInBasket.count,
         price: productInBasket.product.price,
         sum,
-        quantity,
+        quantity: new Quantity(productInBasket.product.quantity),
+        isActive: productInBasket.product.isActive,
       });
     });
   }

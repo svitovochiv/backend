@@ -1,22 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma';
 import { AddProductDto } from '../../domain';
-
+import { Prisma } from '@prisma/client';
 @Injectable()
 export class ProductRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   addManyProducts(addProductDto: AddProductDto[]) {
+    const formattedAddProductDto: Prisma.ProductCreateManyInput[] =
+      addProductDto.map((product) => ({
+        name: product.name,
+        quantity: product.quantity.value,
+        price: product.price,
+        isActive: product.isActive,
+      }));
+
     return this.product.createMany({
-      data: addProductDto,
+      data: formattedAddProductDto,
     });
   }
 
   // TODO optimize this method
   async updateManyProducts(addProductDtos: AddProductDto[]) {
     for (const addProductDtoItem of addProductDtos) {
+      // TODO change when create generic mapper
+
       await this.product.update({
-        data: addProductDtoItem,
+        data: {
+          quantity: addProductDtoItem.quantity.value,
+          price: addProductDtoItem.price,
+          isActive: addProductDtoItem.isActive,
+          name: addProductDtoItem.name,
+        },
         where: {
           name: addProductDtoItem.name,
         },

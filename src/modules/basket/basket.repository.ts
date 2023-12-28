@@ -69,6 +69,11 @@ export class BasketRepository {
     isActiveProduct?: boolean;
   }): Promise<GetBasketProductsDb[]> {
     return this.basketProduct.findMany({
+      orderBy: {
+        product: {
+          name: 'asc',
+        },
+      },
       where: {
         basket: {
           userId,

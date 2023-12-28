@@ -1,4 +1,4 @@
-import { Quantity } from '../../product';
+import { Quantity } from '../../quantity';
 
 export class ProductsInBasketDto {
   productId: string;
@@ -7,6 +7,7 @@ export class ProductsInBasketDto {
   price: number;
   name: string;
   sum: number;
+  isActive: boolean;
 
   constructor(data: ProductsInBasketDto) {
     this.productId = data.productId;
@@ -15,5 +16,6 @@ export class ProductsInBasketDto {
     this.price = data.price;
     this.name = data.name;
     this.sum = data.sum;
+    this.isActive = data.isActive;
   }
 }

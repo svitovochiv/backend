@@ -1,11 +1,11 @@
 import { CountAndPrice } from '../../sum-aggregator';
-import { Quantity } from '../../product';
+import { Quantities } from '../../product';
 
 export class OrderedProductDto implements CountAndPrice {
   name: string;
   productId: string;
   orderId: string;
-  quantity: Quantity;
+  quantity: Quantities;
   count: number;
   price: number;
 
