@@ -7,10 +7,10 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AuthGuard, IsPublic } from '../auth';
-import { ProductService } from './product.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthGuard, IsPublic } from '../auth';
 import { UploadProductViaFileDto } from '../../domain';
+import { ProductService } from './product.service';
 import { GetProductsContractRes } from './contracts';
 
 @Controller('products')

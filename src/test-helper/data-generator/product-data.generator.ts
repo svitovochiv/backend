@@ -1,6 +1,6 @@
 import { Product } from '@prisma/client';
-import { Quantities } from '../../domain';
 import { faker } from '@faker-js/faker';
+import { Quantities } from '../../domain';
 export class ProductDataGenerator {
   static product(): Omit<Product, 'quantity'> & { quantity: Quantities } {
     return {

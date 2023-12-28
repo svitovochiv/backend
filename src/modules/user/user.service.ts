@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from './user.repository';
 import {
   CreateUserDto,
   CreateUserWithRoleDto,
@@ -7,7 +6,7 @@ import {
   UserDto,
 } from '../../domain';
 import { MockUsers } from '../../mock/mock-users';
-import { BadRequestError } from '../../exceptions';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {

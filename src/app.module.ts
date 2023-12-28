@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MulterModule } from '@nestjs/platform-express';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import {
   AuthGuard,
   AuthModule,
@@ -6,11 +9,8 @@ import {
   OrderModule,
   ProductModule,
 } from './modules';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { appConfig } from './config';
-import { MulterModule } from '@nestjs/platform-express';
 import { HttpExceptionFilter } from './exceptions';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { BasketModule } from './modules/basket';
 import { UserReadModule } from './modules/user-read';
 import { ProductFinancialCalculatorModule } from './modules/product-financical-calculator';

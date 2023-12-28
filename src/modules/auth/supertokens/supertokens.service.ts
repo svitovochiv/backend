@@ -4,10 +4,10 @@ import Session from 'supertokens-node/recipe/session';
 import ThirdPartyEmailPassword from 'supertokens-node/recipe/thirdpartyemailpassword';
 import EmailVerification from 'supertokens-node/recipe/emailverification';
 import Multitenancy from 'supertokens-node/recipe/multitenancy';
+import { ConfigService } from '@nestjs/config';
 import { AuthModuleConfig, ConfigInjectionToken } from '../config.interface';
 import { UserService } from '../../user';
 import { IUserRegisterField } from '../interface';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SupertokensService {

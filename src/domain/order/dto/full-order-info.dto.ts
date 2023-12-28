@@ -1,6 +1,5 @@
 import { OrderStatus } from '../order-status';
 import { PaymentMethod } from '../payment-method';
-import { OrderedProductDto } from './ordered-product.dto';
 import { OrderedProductWithSumDto } from './ordered-product-with-sum.dto';
 
 export class FullOrderInfoDto {

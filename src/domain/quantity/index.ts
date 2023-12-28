@@ -1,1 +1,1 @@
-export * from './Quantity';
+export * from './quantity';

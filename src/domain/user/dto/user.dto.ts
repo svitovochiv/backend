@@ -1,5 +1,5 @@
-import { Role } from '../role';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { Role } from '../role';
 
 export class UserDto {
   @IsString()

@@ -7,11 +7,11 @@ import {
   UploadProductViaFileDto,
 } from '../../domain';
 import { ExcelUtil, QuantityUtil } from '../../util';
-import { ProductRepository } from './product.repository';
 import {
   BadRequestError,
   SeveralProductsWithTheSameNameError,
 } from '../../exceptions';
+import { ProductRepository } from './product.repository';
 
 @Injectable()
 export class ProductService {

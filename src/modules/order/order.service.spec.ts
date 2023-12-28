@@ -1,17 +1,17 @@
 import 'reflect-metadata';
+import { Test } from '@nestjs/testing';
 import {
   ProductFinancialCalculatorModule,
   ProductFinancialCalculatorService,
 } from '../product-financical-calculator';
-import { OrderService } from './order.service';
-import { OrderRepository } from './order.repository';
-import { Test } from '@nestjs/testing';
 import { PrismaModule } from '../prisma';
 import { BasketModule } from '../basket';
-import { GetOrderResDb } from './interface';
 import { OrderDataGenerator } from '../../test-helper';
 import { OrderStatus } from '../../domain';
 import { OrderDbToDtoMapper } from '../../util/mapper';
+import { OrderRepository } from './order.repository';
+import { OrderService } from './order.service';
+import { GetOrderResDb } from './interface';
 
 describe('OrderService', () => {
   let orderService: OrderService;

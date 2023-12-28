@@ -1,6 +1,6 @@
-import { ReqShippingDetails } from './req-shipping-details';
 import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ReqShippingDetails } from './req-shipping-details';
 
 export class ReqSubmitBasket {
   @ValidateNested()
