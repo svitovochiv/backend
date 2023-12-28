@@ -6,7 +6,7 @@ import {
   BasketProductWithPriceDto,
   BasketSumDto,
   CreateBasketDto,
-  GetBasketByUserIdDto,
+  GetProductsInBasketQuery,
   ProductsInBasketDto,
   UpdateBasketProductByUserIdDto,
   UpdateBasketProductDto,
@@ -85,7 +85,7 @@ export class BasketService {
     return basket;
   }
 
-  async getOrderedProductsMinimalInfo(data: GetBasketByUserIdDto) {
+  async getOrderedProductsMinimalInfo(data: GetProductsInBasketQuery) {
     const productsInBasket =
       await this.basketRepository.getOrderedProductsMinimalInfoByUserId({
         userId: data.userId,
@@ -112,7 +112,7 @@ export class BasketService {
           }),
       );
   }
-  async getOrderedProductsSum(data: GetBasketByUserIdDto) {
+  async getOrderedProductsSum(data: GetProductsInBasketQuery) {
     const savedBasketProductsWithProduct =
       await this.basketRepository.getBasketProducts({
         userId: data.userId,
@@ -145,11 +145,9 @@ export class BasketService {
     });
   }
 
-  async getProductsInBasket(data: GetBasketByUserIdDto) {
+  async getProductsInBasket(query: GetProductsInBasketQuery) {
     const savedProductsInBasket = await this.basketRepository.getBasketProducts(
-      {
-        userId: data.userId,
-      },
+      query,
     );
     return savedProductsInBasket.map((productInBasket) => {
       const sum = this.sumAggregatorService.calculateProductCost({
