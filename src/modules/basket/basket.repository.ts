@@ -1,6 +1,10 @@
 import { PrismaService } from '../prisma';
 import { Injectable } from '@nestjs/common';
-import { CreateBasketDto, UpdateBasketProductDto } from '../../domain';
+import {
+  CreateBasketDto,
+  GetProductsInBasketQuery,
+  UpdateBasketProductDto,
+} from '../../domain';
 import { GetBasketProductsDb } from './interface';
 
 @Injectable()
@@ -63,19 +67,21 @@ export class BasketRepository {
 
   getBasketProducts({
     userId,
-    isActiveProduct,
-  }: {
-    userId: string;
-    isActiveProduct?: boolean;
-  }): Promise<GetBasketProductsDb[]> {
+    isProductActive,
+  }: GetProductsInBasketQuery): Promise<GetBasketProductsDb[]> {
     return this.basketProduct.findMany({
+      orderBy: {
+        product: {
+          name: 'asc',
+        },
+      },
       where: {
         basket: {
           userId,
         },
         product: {
-          ...(isActiveProduct !== undefined
-            ? { isActive: isActiveProduct }
+          ...(isProductActive !== undefined
+            ? { isActive: isProductActive }
             : undefined),
         },
       },

@@ -7,7 +7,7 @@ export class ProductDbToDtoMapper {
       id: product.id,
       name: product.name,
       price: product.price,
-      quantity: product.quantity as Quantity,
+      quantity: new Quantity(product.quantity),
       isActive: product.isActive,
     });
   }

@@ -5,7 +5,7 @@ import {
   AddOrderedProducts,
   CreateOrder,
   FullOrderInfoDto,
-  GetBasketByUserIdDto,
+  GetProductsInBasketQuery,
   GetOrderDto,
   NewOrderedProductDto,
   OrderMinimalInfoDto,
@@ -38,8 +38,9 @@ export class OrderService {
     });
     const orderedProducts: NewOrderedProductDto[] = (
       await this.basketService.getProductsInBasket(
-        new GetBasketByUserIdDto({
+        new GetProductsInBasketQuery({
           userId: submitBasket.userId,
+          isProductActive: true,
         }),
       )
     ).map((product) => {

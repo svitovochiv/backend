@@ -2,6 +2,7 @@ import { GetOrderResDb } from '../../modules';
 import {
   OrderedProductWithProductDto,
   ProductDto,
+  Quantities,
   Quantity,
 } from '../../domain';
 
@@ -16,12 +17,12 @@ export class OrderDbToDtoMapper {
         name: orderedProduct.product.name,
         productId: orderedProduct.productId,
         orderId: orderedProduct.orderId,
-        quantity: orderedProduct.product.quantity as Quantity,
+        quantity: orderedProduct.product.quantity as Quantities,
         product: new ProductDto({
           id: orderedProduct.product.id,
           name: orderedProduct.product.name,
           price: orderedProduct.product.price,
-          quantity: orderedProduct.product.quantity as Quantity,
+          quantity: new Quantity(orderedProduct.product.quantity),
           isActive: orderedProduct.product.isActive,
         }),
       });

@@ -3,6 +3,7 @@ import {
   AddProductDto,
   ParsedProductDto,
   ProductDto,
+  Quantity,
   UploadProductViaFileDto,
 } from '../../domain';
 import { ExcelUtil, QuantityUtil } from '../../util';
@@ -19,6 +20,7 @@ export class ProductService {
 
   constructor(private readonly productRepository: ProductRepository) {}
 
+  // TODO create test with db
   async createProductsViaFile(
     uploadProductViaFileDto: UploadProductViaFileDto,
   ) {
@@ -27,7 +29,7 @@ export class ProductService {
     );
     if (uploadedProducts) {
       this.checkDuplicateProducts(uploadedProducts);
-      const existedProducts = await this.getProducts();
+      const existedProducts = await this.getProducts({ isActive: undefined });
       const existedProductsMap = new Map<string, ProductDto>();
       existedProducts.forEach((product) => {
         existedProductsMap.set(product.name, product);
@@ -35,7 +37,7 @@ export class ProductService {
       const productsToAdd: AddProductDto[] = [];
       const productsToUpdate: AddProductDto[] = [];
       const uploadedProductsNames = new Set<string>();
-
+      console.log('existedProducts', existedProducts);
       uploadedProducts.forEach((newProduct) => {
         uploadedProductsNames.add(newProduct.name);
         const isProductExisted = existedProducts.find(
@@ -75,23 +77,19 @@ export class ProductService {
     }
   }
 
-  async getProducts() {
+  async getProducts(query?: { isActive?: boolean }) {
+    const isActive = query?.isActive;
     const existedProducts: ProductDto[] = [];
-    (await this.productRepository.getProducts({ isActive: true })).forEach(
+    (await this.productRepository.getProducts({ isActive: isActive })).forEach(
       (product) => {
-        const normalizedQuantity = this.quantityUtil.normalizeQuantity(
-          product.quantity,
-        );
-        if (normalizedQuantity) {
-          const existedProduct = new ProductDto({
-            id: product.id,
-            name: product.name,
-            quantity: normalizedQuantity,
-            price: product.price,
-            isActive: product.isActive,
-          });
-          existedProducts.push(existedProduct);
-        }
+        const existedProduct = new ProductDto({
+          id: product.id,
+          name: product.name,
+          quantity: new Quantity(product.quantity),
+          price: product.price,
+          isActive: product.isActive,
+        });
+        existedProducts.push(existedProduct);
       },
     );
     return existedProducts;
@@ -126,7 +124,7 @@ export class ProductService {
           new ParsedProductDto({
             position: values[0],
             name: values[1],
-            quantity: quantity,
+            quantity: new Quantity(quantity),
             price: values[3],
           }),
         );

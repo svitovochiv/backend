@@ -1,14 +1,15 @@
-import { Quantity, UkraineQuantity } from '../../domain';
+import { Quantities, UkraineQuantity, UnknownQuantity } from '../../domain';
 
 export class QuantityUtil {
-  normalizeQuantity(quantity: string): undefined | Quantity {
+  normalizeQuantity(quantity: string): typeof UnknownQuantity | Quantities {
     const ukraineQuantity = this.getUkraineQuantity(quantity);
-    if (Object.values(Quantity).includes(quantity as Quantity)) {
-      return quantity as Quantity;
+    if (Object.values(Quantities).includes(quantity as Quantities)) {
+      return quantity as Quantities;
     }
     if (ukraineQuantity) {
       return this.ukraineQuantityToEnglishQuantityMap[ukraineQuantity];
     }
+    return UnknownQuantity;
   }
 
   getUkraineQuantity(quantity: string): undefined | UkraineQuantity {
@@ -18,9 +19,9 @@ export class QuantityUtil {
     }
   }
   private readonly ukraineQuantityToEnglishQuantityMap = {
-    [UkraineQuantity.Piece]: Quantity.Piece,
-    [UkraineQuantity.Kg]: Quantity.Kilogram,
-    [UkraineQuantity.Package]: Quantity.Package,
-    [UkraineQuantity.L]: Quantity.Liter,
+    [UkraineQuantity.Piece]: Quantities.Piece,
+    [UkraineQuantity.Kg]: Quantities.Kilogram,
+    [UkraineQuantity.Package]: Quantities.Package,
+    [UkraineQuantity.L]: Quantities.Liter,
   };
 }

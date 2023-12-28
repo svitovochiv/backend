@@ -2,6 +2,7 @@ import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
 import { BasketService } from './basket.service';
 import { AuthGuard, CSession, Session } from '../auth';
 import { ReqUpdateBasketProductByUserIdDto } from '../../domain';
+import { GetBasketByUserIdContract } from './contracts';
 
 @Controller('basket')
 export class BasketController {
@@ -34,10 +35,13 @@ export class BasketController {
 
   @Get('products')
   @UseGuards(new AuthGuard())
-  getBasketByUserId(@Session() session: CSession) {
+  async getBasketByUserId(
+    @Session() session: CSession,
+  ): Promise<GetBasketByUserIdContract> {
     const userId = session.getAccessTokenPayload().appUserId;
-    return this.basketService.getProductsInBasket({
+    const productsInBasket = await this.basketService.getProductsInBasket({
       userId,
     });
+    return GetBasketByUserIdContract.fromProductsInBasketDto(productsInBasket);
   }
 }

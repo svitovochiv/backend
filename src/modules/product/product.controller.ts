@@ -1,4 +1,5 @@
 import {
+  ClassSerializerInterceptor,
   Controller,
   Get,
   Post,
@@ -10,6 +11,7 @@ import { AuthGuard, IsPublic } from '../auth';
 import { ProductService } from './product.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadProductViaFileDto } from '../../domain';
+import { GetProductsContractRes } from './contracts';
 
 @Controller('products')
 export class ProductController {
@@ -24,9 +26,11 @@ export class ProductController {
     );
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   @IsPublic()
-  async getProducts() {
-    return await this.productService.getProducts();
+  async getProducts(): Promise<GetProductsContractRes> {
+    const products = await this.productService.getProducts({ isActive: true });
+    return GetProductsContractRes.fromProducts(products);
   }
 }
