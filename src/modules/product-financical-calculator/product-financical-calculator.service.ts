@@ -9,9 +9,10 @@ import {
 @Injectable()
 export class ProductFinancialCalculatorService {
   calculateProductsCost(products: CountAndPrice[]) {
-    return products.reduce((acc, orderedProduct) => {
+    const sum = products.reduce((acc, orderedProduct) => {
       return acc + this.calculateProductCost(orderedProduct);
     }, 0);
+    return this.normalizeCount(sum);
   }
 
   sumOrderedProducts(
@@ -54,10 +55,7 @@ export class ProductFinancialCalculatorService {
   }
 
   calculateProductCost(product: CountAndPrice): number {
-    return this.normalizeSum(product.price * product.count);
-  }
-  normalizeSum(count: number) {
-    return Math.round(count * 100) / 100;
+    return this.normalizeCount(product.price * product.count);
   }
 
   normalizeCount(count: number) {

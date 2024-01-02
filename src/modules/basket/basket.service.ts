@@ -138,7 +138,6 @@ export class BasketService {
     const sum = this.sumAggregatorService.calculateProductsCost(
       formattedProductsInBasket,
     );
-
     return new BasketSumDto({
       sum,
     });
