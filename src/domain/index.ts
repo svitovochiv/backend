@@ -4,3 +4,4 @@ export * from './order';
 export * from './sum-aggregator';
 export * from './basket';
 export * from './quantity';
+export * from './date';

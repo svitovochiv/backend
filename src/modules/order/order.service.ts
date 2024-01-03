@@ -12,6 +12,7 @@ import {
   PaymentMethod,
   SubmitBasket,
   UpdateOrderDto,
+  GetAllOrdersQueryDto,
 } from '../../domain';
 import { BadRequestError } from '../../exceptions';
 import { ProductFinancialCalculatorService } from '../product-financical-calculator';
@@ -65,7 +66,7 @@ export class OrderService {
     return createdOrder;
   }
 
-  async getAllOrders(query?: { userId?: string }) {
+  async getOrders(query?: GetAllOrdersQueryDto) {
     const savedOrders = await this.orderRepository.getOrders(query);
     return savedOrders.map((savedOrder) => {
       const orderStatus = this.checkOrderStatusType(savedOrder.orderStatus);

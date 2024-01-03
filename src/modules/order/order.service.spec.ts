@@ -73,7 +73,7 @@ describe('OrderService', () => {
         OrderStatus.DELIVERED,
       );
 
-    const orders = await orderService.getAllOrders();
+    const orders = await orderService.getOrders();
     const testDeliveredOrder = orders.find(
       (order) => order.status === OrderStatus.DELIVERED,
     );

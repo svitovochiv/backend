@@ -13,14 +13,12 @@ import {
   Quantity,
 } from '../../domain';
 import { DeleteProductInBasketDto } from '../../domain/order/dto/delete-product-in-basket.dto';
-import { QuantityUtil } from '../../util';
 import { ProductFinancialCalculatorService } from '../product-financical-calculator';
 import { ProductDbToDtoMapper } from '../../util/mapper';
 import { BasketRepository } from './basket.repository';
 
 @Injectable()
 export class BasketService {
-  private quantityUtil = new QuantityUtil();
   constructor(
     private readonly basketRepository: BasketRepository,
     private readonly sumAggregatorService: ProductFinancialCalculatorService,
