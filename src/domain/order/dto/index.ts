@@ -13,3 +13,4 @@ export * from './full-order-info.dto';
 export * from './new-ordered-product.dto';
 export * from './ordered-product-with-sum.dto';
 export * from './ordered-product-with-product.dto';
+export * from './get-all-orders-query.dto';

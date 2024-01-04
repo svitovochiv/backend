@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma';
 import {
   AddOrderedProducts,
   CreateOrder,
+  GetAllOrdersQueryDto,
   GetOrderDto,
   ShippingDetails,
   UpdateOrderDto,
@@ -72,14 +73,18 @@ export class OrderRepository {
   //   });
   // }
 
-  getOrders(query?: { userId?: string }): Promise<GetOrderResDb[]> {
+  getOrders(query?: GetAllOrdersQueryDto): Promise<GetOrderResDb[]> {
     return this.order.findMany({
       where: {
-        userId: query?.userId,
+        userId: query?.withUserId,
+        orderStatus: query?.withStatus,
       },
-      orderBy: {
-        updatedAt: 'desc',
-      },
+      orderBy: [
+        { createdAt: query?.sortByCreatedAtDate },
+        {
+          updatedAt: 'desc',
+        },
+      ],
       include: {
         ShippingDetails: true,
         OrderedProduct: {

@@ -5,10 +5,12 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard, CSession, Session } from '../auth';
 import {
+  GetAllOrdersQueryDto,
   GetOrderDto,
   ReqSubmitBasket,
   ReqUpdateOrder,
@@ -17,6 +19,7 @@ import {
   UpdateOrderDto,
 } from '../../domain';
 import { OrderService } from './order.service';
+import { GetAllOrdersContractRes } from './contracts/get-all-orders.contract';
 
 @Controller('order')
 export class OrderController {
@@ -48,12 +51,15 @@ export class OrderController {
   @UseGuards(new AuthGuard())
   getUserOrders(@Session() session: CSession) {
     const userId = session.getAccessTokenPayload().appUserId;
-    return this.orderService.getAllOrders({ userId });
+    return this.orderService.getOrders({ withUserId: userId });
   }
 
   @Get('all')
-  getAllOrders() {
-    return this.orderService.getAllOrders();
+  getAllOrders(@Query() getAllOrdersQueryDto: GetAllOrdersContractRes) {
+    console.log(getAllOrdersQueryDto);
+    return this.orderService.getOrders(
+      new GetAllOrdersQueryDto(getAllOrdersQueryDto),
+    );
   }
 
   @Get(':id')
