@@ -2,19 +2,23 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  Logger,
+  Param,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard, IsPublic } from '../auth';
-import { UploadProductViaFileDto } from '../../domain';
+import { GetProductsQueryDto, UploadProductViaFileDto } from '../../domain';
 import { ProductService } from './product.service';
-import { GetProductsContractRes } from './contracts';
+import { GetProductsContractReq, GetProductsContractRes } from './contracts';
 
 @Controller('products')
 export class ProductController {
+  private readonly logger = new Logger(ProductController.name);
   constructor(private readonly productService: ProductService) {}
 
   @UseGuards(new AuthGuard())
@@ -29,8 +33,13 @@ export class ProductController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   @IsPublic()
-  async getProducts(): Promise<GetProductsContractRes> {
-    const products = await this.productService.getProducts({ isActive: true });
+  async getProducts(@Query() params: GetProductsContractReq): // ,
+  Promise<GetProductsContractRes> {
+    this.logger.log('get products');
+    // console.log('params', params);
+    const products = await this.productService.getProducts(
+      new GetProductsQueryDto({ isActive: true, ...params }),
+    );
     return GetProductsContractRes.fromProducts(products);
   }
 }

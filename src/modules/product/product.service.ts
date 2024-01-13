@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   AddProductDto,
+  GetProductsQueryDto,
   ParsedProductDto,
   ProductDto,
   Quantity,
@@ -29,7 +30,7 @@ export class ProductService {
     );
     if (uploadedProducts) {
       this.checkDuplicateProducts(uploadedProducts);
-      const existedProducts = await this.getProducts({ isActive: undefined });
+      const existedProducts = await this.getProducts();
       const existedProductsMap = new Map<string, ProductDto>();
       existedProducts.forEach((product) => {
         existedProductsMap.set(product.name, product);
@@ -77,21 +78,18 @@ export class ProductService {
     }
   }
 
-  async getProducts(query?: { isActive?: boolean }) {
-    const isActive = query?.isActive;
+  async getProducts(query?: GetProductsQueryDto) {
     const existedProducts: ProductDto[] = [];
-    (await this.productRepository.getProducts({ isActive: isActive })).forEach(
-      (product) => {
-        const existedProduct = new ProductDto({
-          id: product.id,
-          name: product.name,
-          quantity: new Quantity(product.quantity),
-          price: product.price,
-          isActive: product.isActive,
-        });
-        existedProducts.push(existedProduct);
-      },
-    );
+    (await this.productRepository.getProducts(query)).forEach((product) => {
+      const existedProduct = new ProductDto({
+        id: product.id,
+        name: product.name,
+        quantity: new Quantity(product.quantity),
+        price: product.price,
+        isActive: product.isActive,
+      });
+      existedProducts.push(existedProduct);
+    });
     return existedProducts;
   }
 

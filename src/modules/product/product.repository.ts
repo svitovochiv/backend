@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma';
-import { AddProductDto } from '../../domain';
+import { AddProductDto, GetProductsQueryDto } from '../../domain';
 @Injectable()
 export class ProductRepository {
   constructor(private readonly prismaService: PrismaService) {}
@@ -52,12 +52,23 @@ export class ProductRepository {
     });
   }
 
-  getProducts(params?: { isActive?: boolean }) {
+  getProducts(params?: GetProductsQueryDto) {
+    console.log('params', params?.withName);
     return this.product.findMany({
+      skip: params?.cursor ? 1 : undefined,
+      cursor: params?.cursor
+        ? {
+            id: params.cursor,
+          }
+        : undefined,
       where: {
+        name: {
+          contains: params?.withName,
+          mode: 'insensitive',
+        },
         isActive: params?.isActive,
-        // ...(params?.isActive !== undefined && { isActive: params.isActive }),
       },
+
       orderBy: {
         name: 'asc',
       },
