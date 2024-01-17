@@ -3,6 +3,7 @@ import {
   AddProductDto,
   GetProductsQueryDto,
   ParsedProductDto,
+  ProductCollectionDto,
   ProductDto,
   Quantity,
   UploadProductViaFileDto,
@@ -76,6 +77,17 @@ export class ProductService {
       await this.productRepository.updateManyProducts(productsToUpdate);
       await this.productRepository.deactivateProducts(productsToDeactivate);
     }
+  }
+
+  async getProductCollection(query?: GetProductsQueryDto) {
+    const products = await this.getProducts(query);
+    const productsCount = await this.productRepository.getProductsCount(query);
+    return new ProductCollectionDto({
+      products: products,
+      take: query?.take,
+      skip: query?.skip,
+      total: productsCount,
+    });
   }
 
   async getProducts(query?: GetProductsQueryDto) {

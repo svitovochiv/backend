@@ -1,9 +1,7 @@
 import {
-  ClassSerializerInterceptor,
   Controller,
   Get,
   Logger,
-  Param,
   Post,
   Query,
   UploadedFile,
@@ -30,7 +28,6 @@ export class ProductController {
     );
   }
 
-  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   @IsPublic()
   async getProducts(@Query() params: GetProductsContractReq): // ,

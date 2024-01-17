@@ -52,26 +52,45 @@ export class ProductRepository {
     });
   }
 
+  private getProductsWhereClause(params?: GetProductsQueryDto) {
+    const whereClause: Prisma.ProductWhereInput = {
+      name: {
+        contains: params?.withName,
+        mode: 'insensitive',
+      },
+      isActive: params?.isActive,
+    };
+    return whereClause;
+  }
+
   getProducts(params?: GetProductsQueryDto) {
     console.log('params', params?.withName);
+
+    let skip = undefined;
+    if (params?.cursor) {
+      skip = 1;
+    } else if (params?.skip) {
+      skip = params.skip;
+    }
     return this.product.findMany({
-      skip: params?.cursor ? 1 : undefined,
+      skip: skip,
+      take: params?.take,
       cursor: params?.cursor
         ? {
             id: params.cursor,
           }
         : undefined,
-      where: {
-        name: {
-          contains: params?.withName,
-          mode: 'insensitive',
-        },
-        isActive: params?.isActive,
-      },
-
+      // take: params?.take ? params.take : undefined,
+      where: this.getProductsWhereClause(params),
       orderBy: {
         name: 'asc',
       },
+    });
+  }
+
+  getProductsCount(params?: GetProductsQueryDto) {
+    return this.product.count({
+      where: this.getProductsWhereClause(params),
     });
   }
 
