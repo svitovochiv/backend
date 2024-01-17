@@ -1,4 +1,7 @@
 import { ProductDto } from '../../../domain';
+import { ProductQuery } from './product-query';
+
+export class GetProductsContractReq extends ProductQuery {}
 
 export class GetProductsContractRes {
   products: {

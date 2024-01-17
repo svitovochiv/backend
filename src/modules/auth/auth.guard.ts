@@ -52,7 +52,6 @@ export class AuthGuard implements CanActivate {
     }
     if (this.userService) {
       request.userData = await this.userService?.getUserById({ id: userId });
-      console.log(request.userData);
     }
     return true;
   }

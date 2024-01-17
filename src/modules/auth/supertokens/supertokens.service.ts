@@ -23,10 +23,8 @@ export class SupertokensService {
         apiBasePath: config.appInfo.apiBasePath,
         websiteDomain: config.appInfo.websiteBasePath,
         origin: (input) => {
-          console.log('config.appInfo.apiDomain: ', config.appInfo);
           if (input.request !== undefined) {
             const origin = input.request.getHeaderValue('origin');
-            console.log('origin: ', origin);
             //
             if (origin === undefined) {
               // this means the client is in an iframe, it's a mobile app, or
@@ -54,9 +52,7 @@ export class SupertokensService {
                 ...originalImplementation,
                 createNewSession: async function (input) {
                   try {
-                    console.log('input: ', input);
                     const user = await userService.getByAuthId(input.userId);
-                    console.log('user: ', user);
                     if (user) {
                       input.accessTokenPayload = {
                         ...input.accessTokenPayload,

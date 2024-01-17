@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma';
-import { AddProductDto } from '../../domain';
+import { AddProductDto, GetProductsQueryDto } from '../../domain';
 @Injectable()
 export class ProductRepository {
   constructor(private readonly prismaService: PrismaService) {}
@@ -52,15 +52,45 @@ export class ProductRepository {
     });
   }
 
-  getProducts(params?: { isActive?: boolean }) {
-    return this.product.findMany({
-      where: {
-        isActive: params?.isActive,
-        // ...(params?.isActive !== undefined && { isActive: params.isActive }),
+  private getProductsWhereClause(params?: GetProductsQueryDto) {
+    const whereClause: Prisma.ProductWhereInput = {
+      name: {
+        contains: params?.withName,
+        mode: 'insensitive',
       },
+      isActive: params?.isActive,
+    };
+    return whereClause;
+  }
+
+  getProducts(params?: GetProductsQueryDto) {
+    console.log('params', params?.withName);
+
+    let skip = undefined;
+    if (params?.cursor) {
+      skip = 1;
+    } else if (params?.skip) {
+      skip = params.skip;
+    }
+    return this.product.findMany({
+      skip: skip,
+      take: params?.take,
+      cursor: params?.cursor
+        ? {
+            id: params.cursor,
+          }
+        : undefined,
+      // take: params?.take ? params.take : undefined,
+      where: this.getProductsWhereClause(params),
       orderBy: {
         name: 'asc',
       },
+    });
+  }
+
+  getProductsCount(params?: GetProductsQueryDto) {
+    return this.product.count({
+      where: this.getProductsWhereClause(params),
     });
   }
 
